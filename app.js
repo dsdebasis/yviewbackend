@@ -4,7 +4,7 @@ import cors from "cors"
 const app = express()
 
 const corsOptions = {
-  origin:"https://yview.vercel.app/",
+  origin:"https://yviewfrontend.vercel.app/",
   // optionsSuccessStatus:200,  
   credentials:true
 }
