@@ -29,7 +29,7 @@ router.route("/profile")
 
 router.route("/updatepassword").put(authenticate, updatePassword)
 
-router.route("/updateProfileAndCover")
+router.route("/updateprofileandcover")
       .get(authenticate, getProfileAndCover)
       .put(authenticate, upload.fields(
             [

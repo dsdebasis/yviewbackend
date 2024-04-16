@@ -137,7 +137,11 @@ const login = asyncHandler(async (req, res) => {
       const options = {
         httpOnly: true,
         secure: true,
-
+        expires: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
       }
       return res.status(200)
         .cookie("accessToken", accessToken, options)
@@ -157,7 +161,12 @@ const logout = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: true
+        secure: true,
+        expires: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
   }
 
   return res.status(200)
