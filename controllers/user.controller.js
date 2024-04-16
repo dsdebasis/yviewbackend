@@ -42,10 +42,10 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   if (password !== confirmPassword) throw new ApiError(400, "password and confirm passwords are not matching")
-  const profilePicLocalPath = req.files.profilePic?.[0].path
+  let profilePicLocalPath = req.files.updateProfilePic?.[0].path
 
 
-  const coverImageLocalPath = req.files.coverImage?.[0].path
+  let coverImageLocalPath = req.files.updateCoverImage?.[0].path
   console.log("profile")
   console.log(profilePicLocalPath)
   if (!profilePicLocalPath) {
@@ -126,10 +126,14 @@ const login = asyncHandler(async (req, res) => {
         { new: true })
 
 
-      // emailSubject = "new login"
-      // emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}`
+      emailSubject = "new login"
+      emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}`
 
-      // const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
+    //  try {
+    //    const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
+    //  } catch (error) {
+    //   throw new ApiError(500,"error while sending mail",error)
+    //  }
       const options = {
         httpOnly: true,
         secure: true,
@@ -146,7 +150,7 @@ const login = asyncHandler(async (req, res) => {
 )
 const logout = asyncHandler(async (req, res) => {
   const user = req.user
-  // console.log(user, "ds")
+  
   const findUser = await User.findByIdAndUpdate(user._id, {
     $inc: { activeDevice: -1 }, $set: { refreshToken: "undefined" }
   })
