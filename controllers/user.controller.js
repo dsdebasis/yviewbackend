@@ -138,9 +138,10 @@ const login = asyncHandler(async (req, res) => {
       const options = {
         httpOnly: true,
         secure: true,
-        expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+        
         sameSite: "none",
-        path:"/"
+        path:"/",
+        domain:"https://yviewfrontend.vercel.app"
       }
       return res.status(200)
         .cookie("accessToken", accessToken, options)
