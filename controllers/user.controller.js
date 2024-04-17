@@ -42,11 +42,11 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   if (password !== confirmPassword) throw new ApiError(400, "password and confirm passwords are not matching")
-  let profilePicLocalPath = req.files.updateProfilePic?.[0].path
 
+  let profilePicLocalPath = req.files.profilePic?.[0].path
+  let coverImageLocalPath = req.files.coverImage?.[0].path
+  
 
-  let coverImageLocalPath = req.files.updateCoverImage?.[0].path
-  console.log("profile")
   console.log(profilePicLocalPath)
   if (!profilePicLocalPath) {
     throw new ApiError(400, "A profile pic is necessary")
@@ -89,7 +89,7 @@ const login = asyncHandler(async (req, res) => {
 
     verifyUser = jwt.verify(loginUser, process.env.ACCESS_TOKEN_SECRET)
   }
-
+   
   if (verifyUser) {
     throw new ApiError(400, "already login")
   }
@@ -119,7 +119,8 @@ const login = asyncHandler(async (req, res) => {
     } else {
 
       const { accessToken, refreshToken } = await genAccessTokenAndRefreshToken(findUser._id)
-
+      
+      
       const loggedinDevices = await User.findByIdAndUpdate(findUser._id, {
         $inc: { activeDevice: 1 }
       },
@@ -137,11 +138,9 @@ const login = asyncHandler(async (req, res) => {
       const options = {
         httpOnly: true,
         secure: true,
-        expires: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000),
-        httpOnly: true,
-        secure: true,
+        expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
         sameSite: "none",
-        path: "/",
+        path:"/"
       }
       return res.status(200)
         .cookie("accessToken", accessToken, options)
@@ -160,13 +159,12 @@ const logout = asyncHandler(async (req, res) => {
   })
 
   const options = {
-    httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000),
         httpOnly: true,
         secure: true,
-        sameSite: "none",
-        path: "/",
+        sameSite:"none",
+        path:"/"
+        
+      
   }
 
   return res.status(200)
