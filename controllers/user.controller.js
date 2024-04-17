@@ -141,7 +141,7 @@ const login = asyncHandler(async (req, res) => {
         
         sameSite: "none",
         path:"/",
-        domain:"https://yviewfrontend.vercel.app"
+        
       }
       return res.status(200)
         .cookie("accessToken", accessToken, options)
@@ -164,7 +164,7 @@ const logout = asyncHandler(async (req, res) => {
         secure: true,
         sameSite:"none",
         path:"/",
-        domain:"https://yviewfrontend.vercel.app"
+      
   }
 
   return res.status(200)
