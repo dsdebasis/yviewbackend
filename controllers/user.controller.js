@@ -163,9 +163,8 @@ const logout = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite:"none",
-        path:"/"
-        
-      
+        path:"/",
+        domain:"https://yviewfrontend.vercel.app"
   }
 
   return res.status(200)
