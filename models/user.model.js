@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default:0,
     min: 0,
-    max: [2, "maxium 2 device is allowed"]
+    max: [10, "maxium 10 device is allowed"]
   },
   refreshToken: {
     type: String

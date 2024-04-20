@@ -5,6 +5,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { sendMail } from "../utils/sendMail.js"
 import jwt from "jsonwebtoken"
 import { asyncHandler } from "../utils/AsyncHandler.js"
+
 const genAccessTokenAndRefreshToken = async function (userid) {
   try {
     const user = await User.findById(userid)
@@ -45,7 +46,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   let profilePicLocalPath = req.files.profilePic?.[0].path
   let coverImageLocalPath = req.files.coverImage?.[0].path
-  
+
 
   console.log(profilePicLocalPath)
   if (!profilePicLocalPath) {
@@ -56,13 +57,13 @@ const registerUser = asyncHandler(async (req, res) => {
   const coverImageResponse = await uploadOnCloudinary(coverImageLocalPath)
 
   if (!prfoilePicResponse) throw new ApiError(500, "error while uploading")
-  console.log("proflepicDetails",prfoilePicResponse)
-  console.log("coverPicDetails",coverImageResponse)
+  console.log("proflepicDetails", prfoilePicResponse)
+  console.log("coverPicDetails", coverImageResponse)
   const newUser = await User.create({
-    fullname: fullname,
-    email: email,
-    username: username,
-    password: password,
+    fullname,
+    email,
+    username,
+    password,
     profilePic: prfoilePicResponse.url,
     coverImage: coverImageResponse.url
   })
@@ -72,8 +73,9 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!createdUser) {
     throw new ApiError(500, "error whie creating account")
   }
-
-  return res.status(200).json(new ApiResponse(201,"successfully account created", createdUser))
+  let emailMsg = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
+  await sendMail(email, "Account Creation", emailMsg)
+  return res.status(200).json(new ApiResponse(201, "successfully account created", createdUser))
 })
 
 
@@ -89,7 +91,7 @@ const login = asyncHandler(async (req, res) => {
 
     verifyUser = jwt.verify(loginUser, process.env.ACCESS_TOKEN_SECRET)
   }
-   
+
   if (verifyUser) {
     throw new ApiError(400, "already login")
   }
@@ -106,42 +108,36 @@ const login = asyncHandler(async (req, res) => {
 
   const checkPass = await findUser.isPasswordCorrect(password)
 
-
-
   if (!checkPass) {
 
     throw new ApiError(400, "password is wrong",)
 
   } else {
 
-    if (findUser.activeDevice === 2) {
-      throw new ApiError(400, "maximum 2 devices are allowed")
+    if (findUser.activeDevice === 10) {
+      throw new ApiError(400, "maximum 10 devices are allowed")
     } else {
 
       const { accessToken, refreshToken } = await genAccessTokenAndRefreshToken(findUser._id)
-      
-      
+
       const loggedinDevices = await User.findByIdAndUpdate(findUser._id, {
         $inc: { activeDevice: 1 }
       },
         { new: true })
 
-
-      emailSubject = "new login"
-      emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}`
-
-    //  try {
-    //    const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
-    //  } catch (error) {
-    //   throw new ApiError(500,"error while sending mail",error)
-    //  }
       const options = {
         httpOnly: true,
         secure: true,
-        
         sameSite: "none",
-        path:"/",
-        
+        path: "/",
+        expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)
+      }
+      emailSubject = "new login"
+      emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}`
+      try {
+        const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
+      } catch (error) {
+        throw new ApiError(500, "error while sending mail", error)
       }
       return res.status(200)
         .cookie("accessToken", accessToken, options)
@@ -150,27 +146,29 @@ const login = asyncHandler(async (req, res) => {
     }
   }
 }
-
+ 
 )
 const logout = asyncHandler(async (req, res) => {
   const user = req.user
-  
+
   const findUser = await User.findByIdAndUpdate(user._id, {
-    $inc: { activeDevice: -1 }, $set: { refreshToken: "undefined" }
+    $inc: { activeDevice: -1 }, $set: { refreshToken: "" }
   })
 
   const options = {
-        httpOnly: true,
-        secure: true,
-        sameSite:"none",
-        path:"/",
-      
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+
   }
+  console.log("logout")
 
   return res.status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, "successfully logout"))
+
 
 })
 

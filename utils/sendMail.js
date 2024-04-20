@@ -5,27 +5,29 @@ const transport = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: process.env.SMTP_GMAIL_USER,
-    pass: process.env.SMTP_GMAIL_PASS
+   
+    user: "dsdebasis.dev@gmail.com",
+    pass:"fdbj wxtk jokq khgv"
+  },
 
-  }
 
 })
 
-const sendMail = async function (to, sub, msg) {
+const sendMail = async function (to, subject, message) {
   try {
     await new Promise((resolve, reject) => {
 
       transport.sendMail({
-        from: process.env.SMTP_GMAIL_USER,
+        from: "dsdebasis.dev@gmail.com",
         to: to,
-        subject: sub,
-        text: msg,
-        html: "<h1>hellow</h1>"
+        subject: subject,
+        text: message,
+
+
       }, function (error, info) {
         if (error) {
           console.log("error while sending mail", error)
-          reject(error)
+          reject(error.message)
         } else {
           console.log("successfully email sent to client")
           resolve(info)
@@ -37,6 +39,7 @@ const sendMail = async function (to, sub, msg) {
   }
 }
 
+// sendMail("dsdebasis2@gmail.com", "test", "final test")
 
 
 export { sendMail }

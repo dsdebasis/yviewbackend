@@ -9,61 +9,63 @@ const getProfileAndCover = asyncHandler(async (req, res) => {
     const getExistedProfileAndCover = await User.findById(req.user._id, {
       profilePic: true, coverImage: true
     })
+    return res.status(200).json(new ApiResponse(200, "profile img and cover img fetched successfully", getExistedProfileAndCover))
 
-    let ipDetails = req.socket.remoteAddress
-    //  console.log(req.socket)
-    //  let ipTroughHeader = req.header("x-forwarded-for")
-    // console.log(ipTroughHeader)
-    res.status(200).json(new ApiResponse(200, "profile img and cover img fetched successfully", { getExistedProfileAndCover, ipDetails }))
-    //  let updateDetails = await User.findByIdAndUpdate
   } catch (error) {
     throw new ApiError(500, "errror while fetching data ", error)
   }
 })
 
-
 const updateProfileAndCover = asyncHandler(async (req, res,) => {
-
-  const updateProfilePicPath = req.files.updateProfilPic?.[0].path
+  if (req.files === undefined) {
+    throw new ApiError(400,"no image found .please select one ")
+  } 
+  const updateProfilePicPath = req.files.updateProfilePic?.[0].path
   const updateCoverImagePath = req.files.updateCoverImage?.[0].path
-  
-    if (!updateProfilePicPath && !updateCoverImagePath) {
 
-      throw new ApiError(400, "one of the filed is required", "error while getting files from the user")
+  // console.log("profile",updateProfilePicPath,"cover",updateCoverImagePath)
 
-    }
+  let updateProfilePicRes, updateCoverImageRes,newProfileImgDetails
+  try {
 
-    let updateProfilPicRes, updateCoverImageRes;
-    try {
-      if(updateProfilePicPath) {
-        updateProfilPicRes = await uploadOnCloudinary(updateProfilePicPath)
-      } 
-      if(updateCoverImagePath){
-        updateCoverImageRes = await uploadOnCloudinary(updateCoverImagePath)
-      }
-
-      console.log(updateProfilPicRes || updateCoverImageRes)
-    } catch (error) {
-      throw new ApiError(400, "either of the filed is required", error)
-    }
-    let newProfileImgDetails
-    try {
-      newProfileImgDetails = await User.findOneAndUpdate(req.user.username, {
+    //updating profile
+    if (updateProfilePicPath === undefined) {
+      console.log("no profile img found")
+      // throw new ApiError(400,"no profile pic is selected")
+    } else {
+      updateProfilePicRes = await uploadOnCloudinary(updateProfilePicPath)
+      newProfileImgDetails = await User.findOneAndUpdate({ username: req.user.username }, {
         $set: {
-          profilePic: updateProfilPicRes.url,
-          coverImage: updateCoverImageRes.url
+          profilePic: updateProfilePicRes.url 
         }
-      }, {
+      },
+        { 
         new: true
-      })
+      }).select("profilePic coverImage")
 
-    } catch (error) {
-     throw new ApiError(500,"erroe while uploading images",error)
     }
+    //updating coverImage
+    if (updateCoverImagePath === undefined) {
+      console.log("no cover image updated")
+      // throw new ApiError(400,"no coverimage is provided")
+    } else {
+      updateCoverImageRes = await uploadOnCloudinary(updateCoverImagePath)
+      newProfileImgDetails = await User.findOneAndUpdate({ username: req.user.username }, {
+        $set: {
+          coverImage: updateCoverImageRes.url 
+        }
+      },
+        { 
+        new: true
+      }).select("profilePic coverImage")
+  
+    }
+    return res.status(200).json(new ApiResponse(202,"successfully updated",newProfileImgDetails))
 
-    return res.status(200)
-              .json(new ApiResponse(202, "successfully updated", newProfileImgDetails))
+  } catch (error) {
+    throw new ApiError(500, "error while updating profile and coverImage", error)
+  }
 
- 
+
 })
 export { getProfileAndCover, updateProfileAndCover }
