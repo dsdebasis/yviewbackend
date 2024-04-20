@@ -6,8 +6,8 @@ const transport = nodemailer.createTransport({
   secure: true,
   auth: {
    
-    user: "dsdebasis.dev@gmail.com",
-    pass:"fdbj wxtk jokq khgv"
+    user: process.env.EMAIL,
+    pass:process.env.EMAIL_PASS
   },
 
 
