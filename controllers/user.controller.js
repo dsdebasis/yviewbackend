@@ -83,6 +83,13 @@ const login = asyncHandler(async (req, res) => {
 
   const loginUser = req.cookies.accessToken || req.header("Authorization")?.replace("Bearer ", "")
 
+  let parseClientCookie
+
+  if (req.cookies.auth_info !== undefined) {
+
+    JSON.parse(req.cookies.auth_info)
+  }
+  //  console.log("client side",parseClientCookie)
   const { username, password } = req.body
 
 
@@ -92,8 +99,10 @@ const login = asyncHandler(async (req, res) => {
     verifyUser = jwt.verify(loginUser, process.env.ACCESS_TOKEN_SECRET)
   }
 
-  if (verifyUser) {
-    throw new ApiError(400, "already login")
+  if (parseClientCookie !== undefined) {
+    if (verifyUser && parseClientCookie.status === true) {
+      throw new ApiError(400, "already login")
+    }
   }
 
   if (!username || !password) {
@@ -146,7 +155,7 @@ const login = asyncHandler(async (req, res) => {
     }
   }
 }
- 
+
 )
 const logout = asyncHandler(async (req, res) => {
   const user = req.user

@@ -18,7 +18,10 @@ app.use(express.urlencoded({
 app.use(express.static("public"))
 app.use(cors(corsOptions))
 app.use(cookieParser())
+app.get("/server",function(req,res){
 
+  return res.send("server is running")
+})
 import userRoutes from "./routes/user.routes.js"
 app.use("/api/v1/users", userRoutes)
 

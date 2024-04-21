@@ -17,12 +17,13 @@ const getProfileAndCover = asyncHandler(async (req, res) => {
 })
 
 const updateProfileAndCover = asyncHandler(async (req, res,) => {
-  if (req.files === undefined) {
-    throw new ApiError(400,"no image found .please select one ")
-  } 
+  
   const updateProfilePicPath = req.files.updateProfilePic?.[0].path
   const updateCoverImagePath = req.files.updateCoverImage?.[0].path
 
+  if ((updateProfilePicPath === undefined) && (updateCoverImagePath === undefined)) {
+    throw new ApiError(400,"no image found .please select one ")
+  } 
   // console.log("profile",updateProfilePicPath,"cover",updateCoverImagePath)
 
   let updateProfilePicRes, updateCoverImageRes,newProfileImgDetails
