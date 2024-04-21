@@ -23,6 +23,7 @@ const genAccessTokenAndRefreshToken = async function (userid) {
     throw new ApiError(500, "error while creating tokens")
   }
 }
+
 let emailSubject, emailMessage
 const registerUser = asyncHandler(async (req, res) => {
   const { fullname, email, username, password, confirmPassword } = req.body
@@ -42,7 +43,9 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "username is already existed")
   }
 
-  if (password !== confirmPassword) throw new ApiError(400, "password and confirm passwords are not matching")
+  if (password !== confirmPassword) {
+    throw new ApiError(400, "password and confirm passwords are not matching")
+  }
 
   let profilePicLocalPath = req.files.profilePic?.[0].path
   let coverImageLocalPath = req.files.coverImage?.[0].path
@@ -56,7 +59,9 @@ const registerUser = asyncHandler(async (req, res) => {
   const prfoilePicResponse = await uploadOnCloudinary(profilePicLocalPath)
   const coverImageResponse = await uploadOnCloudinary(coverImageLocalPath)
 
-  if (!prfoilePicResponse) throw new ApiError(500, "error while uploading")
+  if (!prfoilePicResponse) {
+    throw new ApiError(500, "error while uploading")
+  }
   console.log("proflepicDetails", prfoilePicResponse)
   console.log("coverPicDetails", coverImageResponse)
   const newUser = await User.create({
@@ -73,8 +78,10 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!createdUser) {
     throw new ApiError(500, "error whie creating account")
   }
-  let emailMsg = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
-  await sendMail(email, "Account Creation", emailMsg)
+
+  // let emailMsg = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
+  // await sendMail(email, "Account Creation", emailMsg)
+
   return res.status(200).json(new ApiResponse(201, "successfully account created", createdUser))
 })
 
