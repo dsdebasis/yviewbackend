@@ -51,38 +51,50 @@ const registerUser = asyncHandler(async (req, res) => {
   let coverImageLocalPath = req.files.coverImage?.[0].path
 
 
-  console.log(profilePicLocalPath)
-  if (!profilePicLocalPath) {
+
+  if (profilePicLocalPath == undefined) {
     throw new ApiError(400, "A profile pic is necessary")
   }
 
-  const prfoilePicResponse = await uploadOnCloudinary(profilePicLocalPath)
-  const coverImageResponse = await uploadOnCloudinary(coverImageLocalPath)
+  const profilePicResponse = await uploadOnCloudinary(profilePicLocalPath)
+  let coverImageResponse
 
-  if (!prfoilePicResponse) {
-    throw new ApiError(500, "error while uploading")
-  }
-  console.log("proflepicDetails", prfoilePicResponse)
-  console.log("coverPicDetails", coverImageResponse)
-  const newUser = await User.create({
-    fullname,
-    email,
-    username,
-    password,
-    profilePic: prfoilePicResponse.url,
-    coverImage: coverImageResponse.url
-  })
-
-  const createdUser = await User.findById(newUser._id).select("-password -refreshToken")
-
-  if (!createdUser) {
-    throw new ApiError(500, "error whie creating account")
+  if (coverImageLocalPath !== undefined) {
+    coverImageResponse = await uploadOnCloudinary(coverImageLocalPath)
   }
 
-  // let emailMsg = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
-  // await sendMail(email, "Account Creation", emailMsg)
 
-  return res.status(200).json(new ApiResponse(201, "successfully account created", createdUser))
+  if (profilePicResponse == undefined) {
+    throw new ApiError(500, "error while uploading profile pic")
+  }
+  console.log("proflepicDetails", profilePicResponse.secure_url)
+  console.log("coverPicDetails", coverImageResponse?.secure_url)
+  let newUser
+  try {
+    newUser =  await User.create({
+      fullname,
+      email,
+      username,
+      password,
+      profilePic: profilePicResponse?.secure_url,
+      prpicPubId: profilePicResponse?.public_id,
+      coverImage: coverImageResponse?.secure_url,
+      chnlPicPubId: coverImageResponse?.public_id,
+    })
+  
+    const createdUser = await User.findById(newUser._id).select("-password -refreshToken")
+  
+    if (!createdUser) {
+      throw new ApiError(500, "error while creating account")
+    }
+  
+    // let emailMsg = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
+    // await sendMail(email, "Account Creation", emailMsg)
+  
+    return res.status(200).json(new ApiResponse(201, "successfully account created", createdUser))
+  } catch (error) {
+   console.log(error)
+  }
 })
 
 
@@ -94,7 +106,7 @@ const login = asyncHandler(async (req, res) => {
 
   if (req.cookies.auth_info !== undefined) {
 
-    JSON.parse(req.cookies.auth_info)
+    parseClientCookie =  JSON.parse(req.cookies.auth_info)
   }
   //  console.log("client side",parseClientCookie)
   const { username, password } = req.body
@@ -106,6 +118,7 @@ const login = asyncHandler(async (req, res) => {
     verifyUser = jwt.verify(loginUser, process.env.ACCESS_TOKEN_SECRET)
   }
 
+  console.log(parseClientCookie)
   if (parseClientCookie !== undefined) {
     if (verifyUser && parseClientCookie.status === true) {
       throw new ApiError(400, "already login")
@@ -148,13 +161,13 @@ const login = asyncHandler(async (req, res) => {
         path: "/",
         expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)
       }
-      emailSubject = "new login"
-      emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}`
-      try {
-        const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
-      } catch (error) {
-        throw new ApiError(500, "error while sending mail", error)
-      }
+      // emailSubject = "new login"
+      // emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}`
+      // try {
+      //   const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
+      // } catch (error) {
+      //   throw new ApiError(500, "error while sending mail", error)
+      // }
       return res.status(200)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)

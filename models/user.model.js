@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
     unique: true,
-
+    
   },
   username: {
     type: String,
@@ -29,10 +29,19 @@ const userSchema = new mongoose.Schema({
   },
   profilePic: {
     type: String,
-    required: [true, "A profile pic is required"]
+  
   },
+  prpicPubId:{
+    type:String,
+  
+  },
+  
   coverImage: {
     type: String
+  },
+  chnlPicPubId:{
+    type:String,
+  
   },
   activeDevice: {
     type: Number,

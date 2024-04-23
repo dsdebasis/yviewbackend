@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import { ApiError } from "../utils/ApiError.js"
 import { asyncHandler } from "../utils/AsyncHandler.js" 
+import { User } from "../models/user.model.js"
 
 
 const authenticate =asyncHandler( async function (req, _,next) {
@@ -13,7 +14,8 @@ const authenticate =asyncHandler( async function (req, _,next) {
     const verifyAccessToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
     
     if (verifyAccessToken) {
-      req.user = verifyAccessToken
+      req.user = await User.findById(verifyAccessToken._id).select("-password")
+
       next()
 
     } else {
