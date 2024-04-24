@@ -67,12 +67,12 @@ const registerUser = asyncHandler(async (req, res) => {
   if (profilePicResponse == undefined) {
     throw new ApiError(500, "error while uploading profile pic")
   }
-  console.log("proflepicDetails", profilePicResponse.secure_url)
-  console.log("coverPicDetails", coverImageResponse?.secure_url)
+  // console.log("proflepicDetails", profilePicResponse.secure_url)
+  // console.log("coverPicDetails", coverImageResponse?.secure_url)
   let newUser
   try {
     newUser =  await User.create({
-      fullname,
+      fullname, 
       email,
       username,
       password,
@@ -87,13 +87,20 @@ const registerUser = asyncHandler(async (req, res) => {
     if (!createdUser) {
       throw new ApiError(500, "error while creating account")
     }
-  
-    // let emailMsg = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
+     emailSubject= `account created on https://yviewfrontend.vercel.app`
+     emailMessage = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
     // await sendMail(email, "Account Creation", emailMsg)
-  
+
+    try {
+      const mailDetails = await sendMail(createdUser.email, "account created in yviewfrontend.vercel.com", emailMessage)
+      console.log(mailDetails)
+    } catch (error) {
+      throw new ApiError(500, "error while sending mail", error)
+    }
+
     return res.status(200).json(new ApiResponse(201, "successfully account created", createdUser))
   } catch (error) {
-   console.log(error)
+   console.log("error while creating account", error)
   }
 })
 
@@ -161,13 +168,14 @@ const login = asyncHandler(async (req, res) => {
         path: "/",
         expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)
       }
-      // emailSubject = "new login"
-      // emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}`
-      // try {
-      //   const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
-      // } catch (error) {
-      //   throw new ApiError(500, "error while sending mail", error)
-      // }
+      emailSubject = "new login"
+      emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}. IP address -${req.socket.remoteAddress} `
+      try {
+        const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
+        console.log("mail details ",mailDetails)
+      } catch (error) {
+        throw new ApiError(500, "error while sending mail", error)
+      }
       return res.status(200)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
@@ -191,8 +199,12 @@ const logout = asyncHandler(async (req, res) => {
     path: "/",
 
   }
-  console.log("logout")
-
+  
+  try {
+    const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
+  } catch (error) {
+    throw new ApiError(500, "error while sending mail", error)
+  }
   return res.status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)

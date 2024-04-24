@@ -1,15 +1,12 @@
-
 import fs from "fs"
 import { ApiError } from "./ApiError.js";
-
 import { v2 as cloudinary } from 'cloudinary';
-import e from "express";
-import { ApiResponse } from "./ApiResponse.js";
+
 
 cloudinary.config({
-  cloud_name: 'dkghyrkrq',
-  api_key: '685495551614963',
-  api_secret: 'zUfP5KBZYQwDSSlvsWfOWrKP-4I'
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
 const uploadOnCloudinary = async function (localFilePath) {
@@ -29,15 +26,18 @@ const uploadOnCloudinary = async function (localFilePath) {
     return response
   } catch (error) {
     fs.unlinkSync(localFilePath)
+    console.log(error.message)
     throw new ApiError(500, "error while uploading in cloudinary", error)
   }
 }
 const removeExistingFile = function (file) {
-  cloudinary.uploader.destroy(file).then((res) => {
+  cloudinary.uploader.destroy(file,{
+    invalidate:true
+  }).then((res) => {
 
     return res
   }).catch((error) => {
-
+    console.log("error while deteting", error)
     throw new ApiError(500, "error while deleting")
   })
 

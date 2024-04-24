@@ -34,7 +34,7 @@ const updateProfileAndCover = asyncHandler(async (req, res,) => {
       console.log("no profile img found")
       // throw new ApiError(400,"no profile pic is selected")
     } else {
-       console.log("prpid",req.user.prpicPubId)
+      //  console.log("prpid",req.user.prpicPubId)
        removeExistingFile(req.user.prpicPubId)
       
       updateProfilePicRes = await uploadOnCloudinary(updateProfilePicPath)
@@ -58,7 +58,6 @@ const updateProfileAndCover = asyncHandler(async (req, res,) => {
     } else {
       
       removeExistingFile(req.user.chnlPicPubId)
-    
 
       updateCoverImageRes = await uploadOnCloudinary(updateCoverImagePath)
       // console.log("update cover  res",updateCoverImageRes.public_id)
