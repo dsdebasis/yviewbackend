@@ -5,7 +5,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { sendMail } from "../utils/sendMail.js"
 import jwt from "jsonwebtoken"
 import { asyncHandler } from "../utils/AsyncHandler.js"
-
+import IP from "ip"
 const genAccessTokenAndRefreshToken = async function (userid) {
   try {
     const user = await User.findById(userid)
@@ -67,8 +67,8 @@ const registerUser = asyncHandler(async (req, res) => {
   if (profilePicResponse == undefined) {
     throw new ApiError(500, "error while uploading profile pic")
   }
-  // console.log("proflepicDetails", profilePicResponse.secure_url)
-  // console.log("coverPicDetails", coverImageResponse?.secure_url)
+
+
   let newUser
   try {
     newUser =  await User.create({
@@ -89,11 +89,11 @@ const registerUser = asyncHandler(async (req, res) => {
     }
      emailSubject= `account created on https://yviewfrontend.vercel.app`
      emailMessage = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
-    // await sendMail(email, "Account Creation", emailMsg)
+    
 
     try {
-      const mailDetails = await sendMail(createdUser.email, "account created in yviewfrontend.vercel.com", emailMessage)
-      console.log(mailDetails)
+       await sendMail(createdUser.email, "account created in yviewfrontend.vercel.com", emailMessage)
+   
     } catch (error) {
       throw new ApiError(500, "error while sending mail", error)
     }
@@ -112,10 +112,9 @@ const login = asyncHandler(async (req, res) => {
   let parseClientCookie
 
   if (req.cookies.auth_info !== undefined) {
-
     parseClientCookie =  JSON.parse(req.cookies.auth_info)
   }
-  //  console.log("client side",parseClientCookie)
+ 
   const { username, password } = req.body
 
 
@@ -125,7 +124,7 @@ const login = asyncHandler(async (req, res) => {
     verifyUser = jwt.verify(loginUser, process.env.ACCESS_TOKEN_SECRET)
   }
 
-  console.log(parseClientCookie)
+ 
   if (parseClientCookie !== undefined) {
     if (verifyUser && parseClientCookie.status === true) {
       throw new ApiError(400, "already login")
@@ -169,10 +168,11 @@ const login = asyncHandler(async (req, res) => {
         expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)
       }
       emailSubject = "new login"
-      emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}. IP address -${req.socket.remoteAddress} `
+      emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}. IP address -${IP.address()} `
+
       try {
-        const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
-        console.log("mail details ",mailDetails)
+        await sendMail(findUser.email, emailSubject, emailMessage)
+       
       } catch (error) {
         throw new ApiError(500, "error while sending mail", error)
       }
@@ -200,6 +200,8 @@ const logout = asyncHandler(async (req, res) => {
 
   }
   
+  emailSubject="logout"
+  emailMessage="you got logged out from a device"
   try {
     const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
   } catch (error) {

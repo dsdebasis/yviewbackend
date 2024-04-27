@@ -24,7 +24,7 @@ const updateProfileAndCover = asyncHandler(async (req, res,) => {
   if ((updateProfilePicPath === undefined) && (updateCoverImagePath === undefined)) {
     throw new ApiError(400,"no image found .please select one ")
   } 
-  // console.log("profile",updateProfilePicPath,"cover",updateCoverImagePath)
+
 
   let updateProfilePicRes, updateCoverImageRes,newProfileImgDetails
   try {
@@ -32,14 +32,14 @@ const updateProfileAndCover = asyncHandler(async (req, res,) => {
     //updating profile
     if (updateProfilePicPath === undefined) {
       console.log("no profile img found")
-      // throw new ApiError(400,"no profile pic is selected")
+   
     } else {
-      //  console.log("prpid",req.user.prpicPubId)
+ 
        removeExistingFile(req.user.prpicPubId)
       
       updateProfilePicRes = await uploadOnCloudinary(updateProfilePicPath)
       
-      // console.log("updateProPic res",updateProfilePicRes)
+   
       newProfileImgDetails = await User.findOneAndUpdate({ username: req.user.username }, {
         $set: {
           profilePic: updateProfilePicRes.secure_url ,
@@ -54,13 +54,13 @@ const updateProfileAndCover = asyncHandler(async (req, res,) => {
     //updating coverImage
     if (updateCoverImagePath === undefined) {
       console.log("no cover image updated")
-      // throw new ApiError(400,"no coverimage is provided")
+      
     } else {
       
       removeExistingFile(req.user.chnlPicPubId)
 
       updateCoverImageRes = await uploadOnCloudinary(updateCoverImagePath)
-      // console.log("update cover  res",updateCoverImageRes.public_id)
+      
       newProfileImgDetails = await User.findOneAndUpdate({ username: req.user.username }, {
         $set: {
           coverImage: updateCoverImageRes.secure_url,

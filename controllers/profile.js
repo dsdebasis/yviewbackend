@@ -14,7 +14,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 
   const { updateFullname, updateEmail, updateUsername } = req.body
 
-  console.log(updateFullname, updateEmail, updateUsername)
+  // console.log(updateFullname, updateEmail, updateUsername)
 
   let updateDetails
 

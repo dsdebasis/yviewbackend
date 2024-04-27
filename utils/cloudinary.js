@@ -20,7 +20,7 @@ const uploadOnCloudinary = async function (localFilePath) {
     if (!localFilePath) return "no localpath is found"
     const response = await cloudinary.uploader.upload(localFilePath, options)
 
-    console.log("file upload successfully", response.public_id)
+    // console.log("file upload successfully", response.public_id)
     fs.unlinkSync(localFilePath)
 
     return response
