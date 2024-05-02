@@ -47,10 +47,15 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default:0,
     min: 0,
-    max: [10, "maxium 10 device is allowed"]
+    max: [10, "maximum 10 device is allowed"]
   },
   refreshToken: {
     type: String
+  },
+  channel:{
+  type:mongoose.Schema.Types.ObjectId,
+  ref:"Channel"
+    
   },
   watchHistory: [
     {

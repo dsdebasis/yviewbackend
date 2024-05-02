@@ -7,6 +7,9 @@ import { getProfile, updateProfile } from "../controllers/profile.js"
 import { updatePassword } from "../controllers/updatePassword.js"
 import { getProfileAndCover, updateProfileAndCover }
       from "../controllers/update.profile.cover.js"
+import createChannel from "../controllers/createChannel.js"
+import delteAccount from "../controllers/deleteAccount.js"
+import getChannel from "../controllers/getChannel.js"
 
 const router = Router()
 router.route("/register")
@@ -37,5 +40,9 @@ router.route("/updateprofileandcover")
                   { name: "updateCoverImage", maxCount: 1 }
             ]
       ), updateProfileAndCover)
+
+router.route("/createchannel").post(authenticate,upload.single("profilePic"), createChannel)      
+router.route("/getchannel").get(authenticate,getChannel) 
+router.route("/deleteaccount").post(authenticate,delteAccount)
 
 export default router

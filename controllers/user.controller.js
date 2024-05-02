@@ -42,7 +42,9 @@ const registerUser = asyncHandler(async (req, res) => {
   if (existedUser) {
     throw new ApiError(400, "username is already existed")
   }
-
+if(password.length < 6) {
+  throw new ApiError(400,"password must contain 6 characters long")
+}
   if (password !== confirmPassword) {
     throw new ApiError(400, "password and confirm passwords are not matching")
   }
