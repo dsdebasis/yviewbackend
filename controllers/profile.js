@@ -29,7 +29,7 @@ const updateProfile = asyncHandler(async (req, res) => {
         email: updateEmail || req.user.email,
         username: updateUsername || req.user.username
       }
-    }, {
+    }, { 
       new: true
     },).select("-password -refreshToken  -activeDevice")
 

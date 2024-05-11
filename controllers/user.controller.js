@@ -109,32 +109,31 @@ if(password.length < 6) {
 
 const login = asyncHandler(async (req, res) => {
 
-  const loginUser = req.cookies.accessToken || req.header("Authorization")?.replace("Bearer ", "")
+  // const loginUser = req.cookies.accessToken || req.header("Authorization")?.replace("Bearer ", "")
 
-  let parseClientCookie
+  // let parseClientCookie
 
-  if (req.cookies.auth_info !== undefined) {
-    parseClientCookie =  JSON.parse(req.cookies.auth_info)
-  }
+  // if (req.cookies.auth_info !== undefined) {
+  //   parseClientCookie =  JSON.parse(req.cookies.auth_info)
+  // }
  
   const { username, password } = req.body
 
 
-  let verifyUser
-  if (loginUser) {
+  // let verifyUser
+  // if (loginUser) {
 
-    verifyUser = jwt.verify(loginUser, process.env.ACCESS_TOKEN_SECRET)
-  }
+  //   verifyUser = jwt.verify(loginUser, process.env.ACCESS_TOKEN_SECRET)
+  // }
 
  
-  if (parseClientCookie !== undefined) {
-    if (verifyUser && parseClientCookie.status === true) {
-      throw new ApiError(400, "already login")
-    }
-  }
+  // if (parseClientCookie !== undefined) {
+  //   if (verifyUser && parseClientCookie.status === true) {
+  //     throw new ApiError(400, "already login")
+  //   }
+  // }
 
   if (!username || !password) {
-
     throw new ApiError(400, "every field is required")
   }
 
@@ -153,7 +152,7 @@ const login = asyncHandler(async (req, res) => {
 
     if (findUser.activeDevice === 10) {
       throw new ApiError(400, "maximum 10 devices are allowed")
-    } else {
+    }
 
       const { accessToken, refreshToken } = await genAccessTokenAndRefreshToken(findUser._id)
 
@@ -184,7 +183,7 @@ const login = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, "Successfully Log In", { accessToken, refreshToken, activeDevice: loggedinDevices.activeDevice }))
     }
   }
-}
+
 
 )
 const logout = asyncHandler(async (req, res) => {
