@@ -42,9 +42,9 @@ const registerUser = asyncHandler(async (req, res) => {
   if (existedUser) {
     throw new ApiError(400, "username is already existed")
   }
-if(password.length < 6) {
-  throw new ApiError(400,"password must contain 6 characters long")
-}
+  if (password.length < 6) {
+    throw new ApiError(400, "password must contain 6 characters long")
+  }
   if (password !== confirmPassword) {
     throw new ApiError(400, "password and confirm passwords are not matching")
   }
@@ -73,36 +73,37 @@ if(password.length < 6) {
 
   let newUser
   try {
-    newUser =  await User.create({
-      fullname, 
+    newUser = await User.create({
+      fullname,
       email,
       username,
       password,
       profilePic: profilePicResponse?.secure_url,
       prpicPubId: profilePicResponse?.public_id,
-      coverImage: coverImageResponse?.secure_url,
-      chnlPicPubId: coverImageResponse?.public_id,
+      coverImage: coverImageResponse?.secure_url || "",
+      chnlPicPubId: coverImageResponse?.public_id || "",
     })
-  
+
     const createdUser = await User.findById(newUser._id).select("-password -refreshToken")
-  
+
     if (!createdUser) {
       throw new ApiError(500, "error while creating account")
     }
-     emailSubject= `account created on https://yviewfrontend.vercel.app`
-     emailMessage = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
-    
+    emailSubject = `account created on https://yview.vercel.app`
+    emailMessage = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
+
 
     try {
-       await sendMail(createdUser.email, "account created in yviewfrontend.vercel.com", emailMessage)
-   
+      await sendMail(createdUser.email, "account created in yview.vercel.com", emailMessage)
+
     } catch (error) {
       throw new ApiError(500, "error while sending mail", error)
     }
 
     return res.status(200).json(new ApiResponse(201, "successfully account created", createdUser))
   } catch (error) {
-   console.log("error while creating account", error)
+    console.log("error while creating account", error)
+    // throw new ApiError(500, "error while creating account")
   }
 })
 
@@ -116,7 +117,7 @@ const login = asyncHandler(async (req, res) => {
   // if (req.cookies.auth_info !== undefined) {
   //   parseClientCookie =  JSON.parse(req.cookies.auth_info)
   // }
- 
+
   const { username, password } = req.body
 
 
@@ -126,7 +127,7 @@ const login = asyncHandler(async (req, res) => {
   //   verifyUser = jwt.verify(loginUser, process.env.ACCESS_TOKEN_SECRET)
   // }
 
- 
+
   // if (parseClientCookie !== undefined) {
   //   if (verifyUser && parseClientCookie.status === true) {
   //     throw new ApiError(400, "already login")
@@ -154,35 +155,35 @@ const login = asyncHandler(async (req, res) => {
       throw new ApiError(400, "maximum 10 devices are allowed")
     }
 
-      const { accessToken, refreshToken } = await genAccessTokenAndRefreshToken(findUser._id)
+    const { accessToken, refreshToken } = await genAccessTokenAndRefreshToken(findUser._id)
 
-      const loggedinDevices = await User.findByIdAndUpdate(findUser._id, {
-        $inc: { activeDevice: 1 }
-      },
-        { new: true })
+    const loggedinDevices = await User.findByIdAndUpdate(findUser._id, {
+      $inc: { activeDevice: 1 }
+    },
+      { new: true })
 
-      const options = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
-        expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)
-      }
-      emailSubject = "new login"
-      emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}. IP address -${IP.address()} `
-
-      try {
-        await sendMail(findUser.email, emailSubject, emailMessage)
-       
-      } catch (error) {
-        throw new ApiError(500, "error while sending mail", error)
-      }
-      return res.status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
-        .json(new ApiResponse(200, "Successfully Log In", { accessToken, refreshToken, activeDevice: loggedinDevices.activeDevice }))
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)
     }
+    emailSubject = "new login"
+    emailMessage = `a new device got logged in.Active device is  ${loggedinDevices.activeDevice}. IP address -${IP.address()} `
+
+    try {
+      await sendMail(findUser.email, emailSubject, emailMessage)
+
+    } catch (error) {
+      throw new ApiError(500, "error while sending mail", error)
+    }
+    return res.status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(new ApiResponse(200, "Successfully Log In", { accessToken, refreshToken, activeDevice: loggedinDevices.activeDevice }))
   }
+}
 
 
 )
@@ -200,9 +201,9 @@ const logout = asyncHandler(async (req, res) => {
     path: "/",
 
   }
-  
-  emailSubject="logout"
-  emailMessage="you got logged out from a device"
+
+  emailSubject = "logout"
+  emailMessage = "you got logged out from a device"
   try {
     const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
   } catch (error) {
