@@ -45,4 +45,4 @@ router.route("/createchannel").post(authenticate,upload.single("profilePic"), cr
 router.route("/getchannel").get(authenticate,getChannel) 
 router.route("/deleteaccount").post(authenticate,delteAccount)
 
-export default router
+export default router 

@@ -100,7 +100,7 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new ApiError(500, "error while sending mail", error)
     }
 
-    return res.status(200).json(new ApiResponse(201, "successfully account created", createdUser))
+    return res.status(200).json(new ApiResponse(201, "successfully account created Please login", createdUser))
   } catch (error) {
     console.log("error while creating account", error)
     // throw new ApiError(500, "error while creating account")

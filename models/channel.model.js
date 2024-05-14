@@ -10,8 +10,8 @@ const channelSchema = new Schema({
     required:[true,"channel name is required"]
   },
   createdAt:{
-    type:Date,
-    required:[true,"channel creation time is required"]
+    type:String,
+   
   },
   profilePic:{
     type:String,

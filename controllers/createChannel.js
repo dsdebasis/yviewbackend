@@ -8,7 +8,12 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const createChannel = asyncHandler(async (req, res, next) => {
 
   const { channelName, about } = req.body
-  const profilePic = req.file
+  const profilePic = req.file?.path
+  
+  if(profilePic == undefined){
+    throw new ApiError(400,"a channel pic is required")
+  }
+  
 
   if (!channelName || !about) {
     throw new ApiError(400, "every field is required")
@@ -20,19 +25,20 @@ const createChannel = asyncHandler(async (req, res, next) => {
     // console.log(findChannel)
     throw new ApiError(400, "user has already a channel")
   }
-
+ 
   let profilePicRes
   if (profilePic !== undefined) {
     profilePicRes = await uploadOnCloudinary(profilePic)
   }
+ 
 
   const newChannel = await Channel.create({
     owner: req.user._id,
     channelName,
     about,
     profilePic: profilePicRes?.secure_url || undefined,
-    profilePic: profilePicRes?.public_id || undefined,
-    createdAt: new Date().toLocaleString()
+    profilePicPubId: profilePicRes?.public_id || undefined,
+    createdAt: new Date().toLocaleDateString()
   })
 
    await User.findByIdAndUpdate(findChannel._id,{
