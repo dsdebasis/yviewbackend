@@ -22,7 +22,7 @@ const sendMail = async function (to, subject, message) {
           console.log("error while sending mail", error)
           reject(error.message)
         } else {
-          // console.log("successfully email sent to client")
+         
           resolve(info)
         }
       })
