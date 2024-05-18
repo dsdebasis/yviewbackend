@@ -58,8 +58,9 @@ const cloduinaryVideoUpload = async function (file) {
         // eager_async: true,
         // eager_notification_url: "https://mysite.example.com/notify_endpoint"
       })
-
+      fs.unlinkSync(file)
   } catch (error) {
+    fs.unlinkSync(file)
     error = error
   }
 
