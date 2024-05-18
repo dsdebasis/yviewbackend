@@ -16,7 +16,7 @@ const videoSchema = new Schema({
   },
   thumbnail: {
     type: String,
-    required: true
+    
   },
   duration: {
     type: Number, required: true
@@ -24,22 +24,21 @@ const videoSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId, ref: "User"
   },
+  ownerName:{
+  type:String
+  },
   isPublished: {
     type: Boolean,
-    default: true
+    default: false
   },
-  likes: [
-    {
-      type: Mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    }
-  ],
-  dislikes:[
-    {
-      type: Mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    }
-  ]
+  
+  uploadTime:{
+    type:String
+  },
+  userInteractionWithVideos:{
+    type:Schema.Types.ObjectId,
+    ref:"VideoDetails"
+  }
 }, {
   timestamps: true
 })

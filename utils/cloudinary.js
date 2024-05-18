@@ -31,8 +31,8 @@ const uploadOnCloudinary = async function (localFilePath) {
   }
 }
 const removeExistingFile = function (file) {
-  cloudinary.uploader.destroy(file,{
-    invalidate:true
+  cloudinary.uploader.destroy(file, {
+    invalidate: true
   }).then((res) => {
 
     return res
@@ -43,4 +43,28 @@ const removeExistingFile = function (file) {
 
 }
 
-export { uploadOnCloudinary, removeExistingFile }
+const cloduinaryVideoUpload = async function (file) {
+  let result, error;
+  try {
+    if (!file) return "no file found to uplaod"
+
+    result = await cloudinary.uploader.upload(file,
+      {
+        resource_type: "video",
+        // public_id: "myfolder/mysubfolder/dog_closeup",
+        // eager: [
+        //   { width: 300, height: 300, crop: "pad", audio_codec: "none" },
+        //   { width: 160, height: 100, crop: "crop", gravity: "south", audio_codec: "none" }],
+        // eager_async: true,
+        // eager_notification_url: "https://mysite.example.com/notify_endpoint"
+      })
+
+  } catch (error) {
+    error = error
+  }
+
+
+  return result || error
+}
+
+export { uploadOnCloudinary, removeExistingFile, cloduinaryVideoUpload }
