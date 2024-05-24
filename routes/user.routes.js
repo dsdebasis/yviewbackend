@@ -11,6 +11,7 @@ import createChannel from "../controllers/createChannel.js"
 import delteAccount from "../controllers/deleteAccount.js"
 import getChannel from "../controllers/getChannel.js"
 import { handleVideoUpload } from "../controllers/videoUpload.js"
+
 const router = Router()
 router.route("/register")
       .post(imageUpload.fields([
