@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import Channel from "../models/channel.model.js"
 import { removeExistingFile } from "../utils/cloudinary.js"
-
+import {Video} from "../models/video.model.js"
 const delteAccount = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body
   if (!email || !password) {
@@ -26,6 +26,9 @@ const delteAccount = asyncHandler(async (req, res, next) => {
   let deletedChannel
   console.log(req.user.channel)
   if (req.user.channel !== undefined) {
+
+    let deleteVideos =await Video.deleteMany({owner:req.user._id})
+    console.log("delete video",deleteVideos)
     deletedChannel = await Channel.findByIdAndDelete(req.user.channel)
   } else {
     console.log("user has no channel")

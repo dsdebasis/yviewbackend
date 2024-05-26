@@ -14,7 +14,7 @@ connectDB()
     // console.log("PORT",process.env.PORT)
     app.listen(PORT,()=>{
       console.log(`app is connected at http://localhost:${PORT}`)
-      
+       
     })
   })
   .catch(()=>{
