@@ -26,8 +26,8 @@ const handleVideoUpload = asyncHandler(async (req, res) => {
 
   userChannelDetails = await userChannelDetails.populate("channel")
   
-  let channelName = userChannelDetails.channelName
-
+  // let channelName = userChannelDetails.channel.channelName
+//  console.log("owner",channelName)
 
   let videoResponse = await cloduinaryVideoUpload(video);
 
@@ -39,7 +39,8 @@ const handleVideoUpload = asyncHandler(async (req, res) => {
       videoFile: videoResponse?.secure_url,
       duration: videoResponse?.duration,
       uploadTime: new Date().toDateString(),
-      ownerName: channelName
+      ownerName: userChannelDetails.channel?.channelName,
+      channelProfilePic:userChannelDetails.channel?.profilePic
     })
 
   let updateChannel = await Channel.findOneAndUpdate(userChannelDetails.channelName,{

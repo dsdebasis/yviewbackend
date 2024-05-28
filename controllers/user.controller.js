@@ -80,7 +80,7 @@ const registerUser = asyncHandler(async (req, res) => {
       password,
       profilePic: profilePicResponse?.secure_url,
       prpicPubId: profilePicResponse?.public_id,
-      coverImage: coverImageResponse?.secure_url || "",
+     
       chnlPicPubId: coverImageResponse?.public_id || "",
     })
 

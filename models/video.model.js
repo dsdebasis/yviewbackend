@@ -16,7 +16,7 @@ const videoSchema = new Schema({
   },
   thumbnail: {
     type: String,
-    
+
   },
   duration: {
     type: Number, required: true
@@ -24,20 +24,23 @@ const videoSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId, ref: "User"
   },
-  ownerName:{
-  type:String
+  ownerName: {
+    type: String
+  },
+  channelProfilePic: {
+    type: String
   },
   isPublished: {
     type: Boolean,
     default: false
   },
-  
-  uploadTime:{
-    type:String
+
+  uploadTime: {
+    type: String
   },
-  userInteractionWithVideos:{
-    type:Schema.Types.ObjectId,
-    ref:"VideoDetails"
+  userInteractionWithVideos: {
+    type: Schema.Types.ObjectId,
+    ref: "VideoDetails"
   }
 }, {
   timestamps: true

@@ -11,7 +11,7 @@ import createChannel from "../controllers/createChannel.js"
 import delteAccount from "../controllers/deleteAccount.js"
 import getChannel from "../controllers/getChannel.js"
 import { handleVideoUpload } from "../controllers/videoUpload.js"
-
+import getVideos from "../controllers/getVideos.js"
 const router = Router()
 router.route("/register")
       .post(imageUpload.fields([
@@ -47,6 +47,7 @@ router.route("/createchannel").post(authenticate,imageUpload.single("profilePic"
 router.route("/uploadvideo").post(authenticate,videoUpload.single("video"),handleVideoUpload)
 
 router.route("/getchannel").get(authenticate,getChannel)  
+router.route("/getvideos").get(getVideos)
 router.route("/deleteaccount").post(authenticate,delteAccount)
 
 export default router 
