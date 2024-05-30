@@ -13,15 +13,17 @@ import getChannel from "../controllers/getChannel.js"
 import { handleVideoUpload } from "../controllers/videoUpload.js"
 import getVideos from "../controllers/getVideos.js"
 const router = Router()
-router.route("/register")
-      .post(imageUpload.fields([
-            {
-                  name: "profilePic", maxCount: 1
-            },
-            {
-                  name: "coverImage", maxCount: 1
-            }
-      ]), registerUser)
+// router.route("/register")
+//       .post(imageUpload.fields([
+//             {
+//                   name: "profilePic", maxCount: 1
+//             },
+//             {
+//                   name: "coverImage", maxCount: 1
+//             }
+//       ]), registerUser)
+
+router.route("/register").post(imageUpload.single("profilePic"),registerUser)      
 
 router.route("/login").post(login)
 
@@ -44,10 +46,10 @@ router.route("/updateprofileandcover")
 
 router.route("/createchannel").post(authenticate,imageUpload.single("profilePic"), createChannel)      
 
-router.route("/uploadvideo").post(authenticate,videoUpload.single("video"),handleVideoUpload)
+router.route("/uploadvideo").post(authenticate, videoUpload.fields([{name:"thumbnail"},{name:"video"}]),handleVideoUpload)
 
 router.route("/getchannel").get(authenticate,getChannel)  
 router.route("/getvideos").get(getVideos)
-router.route("/deleteaccount").post(authenticate,delteAccount)
+router.route("/deleteaccount").delete(authenticate,delteAccount)
 
 export default router 

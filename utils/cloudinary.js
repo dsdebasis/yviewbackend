@@ -2,7 +2,6 @@ import fs from "fs"
 import { ApiError } from "./ApiError.js";
 import { v2 as cloudinary } from 'cloudinary';
 
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -22,7 +21,7 @@ const uploadOnCloudinary = async function (localFilePath) {
 
     // console.log("file upload successfully", response.public_id)
     fs.unlinkSync(localFilePath)
-
+   
     return response
   } catch (error) {
     fs.unlinkSync(localFilePath)
@@ -43,10 +42,10 @@ const removeExistingFile = function (file) {
 
 }
 
-const cloduinaryVideoUpload = async function (file) {
+const cloduinaryVideoUpload = async function (localfile) {
   let result, error;
   try {
-    if (!file) return "no file found to uplaod"
+    if (!localfile) return "no file found to uplaod"
 
     result = await cloudinary.uploader.upload(file,
       {
@@ -58,9 +57,9 @@ const cloduinaryVideoUpload = async function (file) {
         // eager_async: true,
         // eager_notification_url: "https://mysite.example.com/notify_endpoint"
       })
-      fs.unlinkSync(file)
+      fs.unlinkSync(localfile)
   } catch (error) {
-    fs.unlinkSync(file)
+    fs.unlinkSync(localfile)
     error = error
   }
 

@@ -5,16 +5,20 @@ import { cloduinaryVideoUpload } from "../utils/cloudinary.js"
 import { User } from "../models/user.model.js"
 import { Video } from "../models/video.model.js"
 import Channel from "../models/channel.model.js"
+import { uploadOnCloudinary } from "../utils/cloudinary.js"
+
 const handleVideoUpload = asyncHandler(async (req, res) => {
 
   // console.log(req.user.channel)
   if (req.user.channel == undefined) {
     throw new ApiError(400, "you don't have any channel.Please create a channel")
   }
-  const video = req.file?.path
+  const thumbnail = req.files.thumbnail?.[0]?.path
+  const video = req.files.video?.[0]?.path
+
   const { videoTitle, videoDes } = req.body
-  if (video == undefined) {
-    throw new ApiError(400, " no video selected")
+  if (video == undefined || thumbnail == undefined) {
+    throw new ApiError(400, "provide video and thumbnail")
   }
 
   if (!videoTitle || !videoDes) {
@@ -25,27 +29,32 @@ const handleVideoUpload = asyncHandler(async (req, res) => {
   let userChannelDetails = await User.findById(req.user._id)
 
   userChannelDetails = await userChannelDetails.populate("channel")
-  
+
   // let channelName = userChannelDetails.channel.channelName
-//  console.log("owner",channelName)
+  //  console.log("owner",channelName)
 
+  let thubnailResponse = await uploadOnCloudinary(thumbnail)
+  console.log("one")
   let videoResponse = await cloduinaryVideoUpload(video);
-
+  console.log("two")
   let videoDetails =
     await Video.create({
       title: videoTitle,
       owner: req.user._id,
       description: videoDes,
+      thumbnail: thubnailResponse.secure_url,
+      thumbnailCloudinaryId: thubnailResponse.public_id,
       videoFile: videoResponse?.secure_url,
+      cloudinaryVideoId: videoResponse?.public_id,
       duration: videoResponse?.duration,
       uploadTime: new Date().toDateString(),
       ownerName: userChannelDetails.channel?.channelName,
-      channelProfilePic:userChannelDetails.channel?.profilePic
+      channelProfilePic: userChannelDetails.channel?.profilePic
     })
 
-  let updateChannel = await Channel.findOneAndUpdate(userChannelDetails.channelName,{
-    $push:{videos:videoDetails._id}
-  },{new:true})
+  let updateChannel = await Channel.findOneAndUpdate(userChannelDetails.channelName, {
+    $push: { videos: videoDetails._id }
+  }, { new: true })
 
   return res.status(201).json(new ApiResponse(200, "successfully video uploaded", videoDetails))
 })

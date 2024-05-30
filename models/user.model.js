@@ -36,13 +36,6 @@ const userSchema = new mongoose.Schema({
   
   },
   
-  coverImage: {
-    type: String
-  },
-  chnlPicPubId:{
-    type:String,
-  
-  },
   activeDevice: {
     type: Number,
     default:0,

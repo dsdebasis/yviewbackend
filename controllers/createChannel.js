@@ -9,11 +9,6 @@ const createChannel = asyncHandler(async (req, res, next) => {
 
   const { channelName, about } = req.body
   const profilePic = req.file?.path
-  
-  if(profilePic == undefined){
-    throw new ApiError(400,"a channel pic is required")
-  }
-  
 
   if (!channelName || !about) {
     throw new ApiError(400, "every field is required")

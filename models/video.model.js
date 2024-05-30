@@ -10,13 +10,19 @@ const videoSchema = new Schema({
     type: String,
     required: true
   },
+
   videoFile: {
     type: String,
     required: true
   },
+  cloudinaryVideoId:{
+    type:String,
+  },
   thumbnail: {
     type: String,
-
+  },
+  thumbnailCloudinaryId: {
+    type:String
   },
   duration: {
     type: Number, required: true

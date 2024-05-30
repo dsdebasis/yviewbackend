@@ -49,27 +49,16 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "password and confirm passwords are not matching")
   }
 
-  let profilePicLocalPath = req.files.profilePic?.[0].path
-  let coverImageLocalPath = req.files.coverImage?.[0].path
+  let profilePicLocalPath = req.file?.profilePic?.path
+  let profilePicResponse
+  if (profilePicLocalPath !== undefined) {
+     profilePicResponse = await uploadOnCloudinary(profilePicLocalPath)
 
+    if (profilePicResponse == undefined) {
+      throw new ApiError(500, "error while uploading profile pic")
+    }
 
-
-  if (profilePicLocalPath == undefined) {
-    throw new ApiError(400, "A profile pic is necessary")
   }
-
-  const profilePicResponse = await uploadOnCloudinary(profilePicLocalPath)
-  let coverImageResponse
-
-  if (coverImageLocalPath !== undefined) {
-    coverImageResponse = await uploadOnCloudinary(coverImageLocalPath)
-  }
-
-
-  if (profilePicResponse == undefined) {
-    throw new ApiError(500, "error while uploading profile pic")
-  }
-
 
   let newUser
   try {
@@ -78,13 +67,12 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       username,
       password,
-      profilePic: profilePicResponse?.secure_url,
-      prpicPubId: profilePicResponse?.public_id,
-     
-      chnlPicPubId: coverImageResponse?.public_id || "",
+      profilePic: profilePicResponse?.secure_url || "",
+      prpicPubId: profilePicResponse?.public_id || "",
+
     })
 
-    const createdUser = await User.findById(newUser._id).select("-password -refreshToken")
+    const createdUser = await User.findById(newUser._id).select("-password -refreshToken ")
 
     if (!createdUser) {
       throw new ApiError(500, "error while creating account")
