@@ -6,7 +6,7 @@ const getVideos = asyncHandler(async(req,res,next)=>{
 let allVideos = await Video.find({},{
   createdAt:false,
   updatedAt:false
-}).limit(8)
+})
    
 
 return res.status(200).json(new ApiResponse(200,"successfully fetched all the videos",allVideos))

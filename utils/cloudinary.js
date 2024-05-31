@@ -21,7 +21,7 @@ const uploadOnCloudinary = async function (localFilePath) {
 
     // console.log("file upload successfully", response.public_id)
     fs.unlinkSync(localFilePath)
-   
+
     return response
   } catch (error) {
     fs.unlinkSync(localFilePath)
@@ -45,9 +45,12 @@ const removeExistingFile = function (file) {
 const cloduinaryVideoUpload = async function (localfile) {
   let result, error;
   try {
-    if (!localfile) return "no file found to uplaod"
 
-    result = await cloudinary.uploader.upload(file,
+    if (!localfile) {
+      throw new ApiError(500, "no video file found")
+    }
+
+    result = await cloudinary.uploader.upload(localfile,
       {
         resource_type: "video",
         // public_id: "myfolder/mysubfolder/dog_closeup",
@@ -57,12 +60,11 @@ const cloduinaryVideoUpload = async function (localfile) {
         // eager_async: true,
         // eager_notification_url: "https://mysite.example.com/notify_endpoint"
       })
-      fs.unlinkSync(localfile)
+    fs.unlinkSync(localfile)
   } catch (error) {
     fs.unlinkSync(localfile)
     error = error
   }
-
 
   return result || error
 }

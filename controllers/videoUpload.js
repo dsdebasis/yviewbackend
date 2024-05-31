@@ -15,7 +15,7 @@ const handleVideoUpload = asyncHandler(async (req, res) => {
   }
   const thumbnail = req.files.thumbnail?.[0]?.path
   const video = req.files.video?.[0]?.path
-
+console.log(video,"video")
   const { videoTitle, videoDes } = req.body
   if (video == undefined || thumbnail == undefined) {
     throw new ApiError(400, "provide video and thumbnail")
@@ -30,19 +30,16 @@ const handleVideoUpload = asyncHandler(async (req, res) => {
 
   userChannelDetails = await userChannelDetails.populate("channel")
 
-  // let channelName = userChannelDetails.channel.channelName
-  //  console.log("owner",channelName)
-
   let thubnailResponse = await uploadOnCloudinary(thumbnail)
-  console.log("one")
+  // console.log("one",thubnailResponse)
   let videoResponse = await cloduinaryVideoUpload(video);
-  console.log("two")
+  console.log("two",videoResponse)
   let videoDetails =
     await Video.create({
       title: videoTitle,
       owner: req.user._id,
       description: videoDes,
-      thumbnail: thubnailResponse.secure_url,
+      thumbnail: thubnailResponse.secure_url || "",
       thumbnailCloudinaryId: thubnailResponse.public_id,
       videoFile: videoResponse?.secure_url,
       cloudinaryVideoId: videoResponse?.public_id,
