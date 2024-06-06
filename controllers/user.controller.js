@@ -1,11 +1,13 @@
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { User } from "../models/user.model.js"
-import { uploadOnCloudinary } from "../utils/cloudinary.js"
+
 import { sendMail } from "../utils/sendMail.js"
 import jwt from "jsonwebtoken"
 import { asyncHandler } from "../utils/AsyncHandler.js"
 import IP from "ip"
+import { sendOtp } from "../utils/sendOtp.js"
+import otpVerification from "./otpVerification.js"
 const genAccessTokenAndRefreshToken = async function (userid) {
   try {
     const user = await User.findById(userid)
@@ -25,7 +27,19 @@ const genAccessTokenAndRefreshToken = async function (userid) {
 }
 
 let emailSubject, emailMessage
+
 const registerUser = asyncHandler(async (req, res) => {
+
+  let checkTempToken = req.cookies.account_Token || req.header("Authorization")?.replace("Bearer ", "")
+  let checkVerifyToken
+
+  if (checkTempToken) {
+   checkVerifyToken =  jwt.verify(checkTempToken, process.env.ACCESS_TOKEN_SECRET)
+  }
+
+  if (checkVerifyToken) {
+    throw new ApiError(400, "already token generated. please verify it on verifyotp page")
+  }
   const { fullname, email, username, password, confirmPassword } = req.body
 
   if (!fullname || !email || !username || !password || !confirmPassword) {
@@ -49,50 +63,33 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "password and confirm passwords are not matching")
   }
 
-  let profilePicLocalPath = req.file?.profilePic?.path
-  let profilePicResponse
-  if (profilePicLocalPath !== undefined) {
-     profilePicResponse = await uploadOnCloudinary(profilePicLocalPath)
 
-    if (profilePicResponse == undefined) {
-      throw new ApiError(500, "error while uploading profile pic")
-    }
+  function tempToken(fullname, email, username, confirmPassword) {
 
-  }
-
-  let newUser
-  try {
-    newUser = await User.create({
-      fullname,
-      email,
-      username,
-      password,
-      profilePic: profilePicResponse?.secure_url || "",
-      prpicPubId: profilePicResponse?.public_id || "",
-
+    return jwt.sign({
+      name: fullname,
+      email: email,
+      username: username,
+      password: confirmPassword
+    }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1d"
     })
 
-    const createdUser = await User.findById(newUser._id).select("-password -refreshToken ")
-
-    if (!createdUser) {
-      throw new ApiError(500, "error while creating account")
-    }
-    emailSubject = `account created on https://yview.vercel.app`
-    emailMessage = `Successfully Account Created. Wellcome ${fullname} to our platform , where funs are just one step away. Thank You `
-
-
-    try {
-      await sendMail(createdUser.email, "account created in yview.vercel.com", emailMessage)
-
-    } catch (error) {
-      throw new ApiError(500, "error while sending mail", error)
-    }
-
-    return res.status(200).json(new ApiResponse(201, "successfully account created Please login", createdUser))
-  } catch (error) {
-    console.log("error while creating account", error)
-    // throw new ApiError(500, "error while creating account")
   }
+
+  let tempAccountToken = tempToken(fullname, email, username, confirmPassword)
+  let otpDetails = await sendOtp(req, res)
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    expires: new Date(Date.now() + (5 * 60 * 1000))
+  }
+  return res.status(200)
+    .cookie("account_Token", tempAccountToken, options)
+    .json(new ApiResponse(200, "Please Verify the email in verifyotp page"))
 })
 
 
@@ -170,6 +167,7 @@ const login = asyncHandler(async (req, res) => {
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", refreshToken, options)
       .json(new ApiResponse(200, "Successfully Log In", { accessToken, refreshToken, activeDevice: loggedinDevices.activeDevice }))
+
   }
 }
 

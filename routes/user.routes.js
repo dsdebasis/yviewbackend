@@ -12,22 +12,20 @@ import delteAccount from "../controllers/deleteAccount.js"
 import getChannel from "../controllers/getChannel.js"
 import { handleVideoUpload } from "../controllers/videoUpload.js"
 import getVideos from "../controllers/getVideos.js"
+import otpVerification from "../controllers/otpVerification.js"
+import { sendOtp } from "../utils/sendOtp.js"
+
 const router = Router()
-// router.route("/register")
-//       .post(imageUpload.fields([
-//             {
-//                   name: "profilePic", maxCount: 1
-//             },
-//             {
-//                   name: "coverImage", maxCount: 1
-//             }
-//       ]), registerUser)
 
-router.route("/register").post(imageUpload.single("profilePic"),registerUser)      
 
-router.route("/login").post(login)
+router.route("/register")
+      .post(imageUpload.single("profilePic"),registerUser)      
 
-router.route("/logout").post(authenticate, logout)
+router.route("/login")
+      .post(login)
+
+router.route("/logout")
+      .post(authenticate, logout)
 
 router.route("/profile")
       .get(authenticate, getProfile)
@@ -44,12 +42,25 @@ router.route("/updateprofileandcover")
             ]
       ), updateProfileAndCover)
 
-router.route("/createchannel").post(authenticate,imageUpload.single("profilePic"), createChannel)      
+router.route("/createchannel")
+      .post(authenticate,imageUpload.single("profilePic"), createChannel)      
 
-router.route("/uploadvideo").post(authenticate, videoUpload.fields([{name:"thumbnail"},{name:"video"}]),handleVideoUpload)
+router.route("/uploadvideo")
+      .post(authenticate, videoUpload.fields([{name:"thumbnail"},{name:"video"}]),handleVideoUpload)
 
-router.route("/getchannel").get(authenticate,getChannel)  
-router.route("/getvideos").get(getVideos)
-router.route("/deleteaccount").delete(authenticate,delteAccount)
+router.route("/getchannel")
+      .get(authenticate,getChannel) 
+
+router.route("/getvideos")
+      .get(getVideos)
+
+router.route("/deleteaccount")
+      .delete(authenticate,delteAccount)
+
+router.route("/getotp")
+      .post(sendOtp)
+
+router.route("/verifyotp")
+      .post(otpVerification)
 
 export default router 
