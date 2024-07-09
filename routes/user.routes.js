@@ -8,7 +8,7 @@ import { updatePassword } from "../controllers/updatePassword.js"
 import { getProfileAndCover, updateProfileAndCover }
       from "../controllers/update.profile.cover.js"
 import createChannel from "../controllers/createChannel.js"
-import delteAccount from "../controllers/deleteAccount.js"
+import deleteAccount from "../controllers/deleteAccount.js"
 import getChannel from "../controllers/getChannel.js"
 import { handleVideoUpload } from "../controllers/videoUpload.js"
 import getVideos from "../controllers/getVideos.js"
@@ -55,7 +55,7 @@ router.route("/getvideos")
       .get(getVideos)
 
 router.route("/deleteaccount")
-      .delete(authenticate,delteAccount)
+      .delete(authenticate,deleteAccount)
 
 router.route("/getotp")
       .post(sendOtp)

@@ -50,6 +50,6 @@ let verifyOtp = async function (email, otp) {
     return true
   } else {
     return false
-  }
+  } 
 }
-export { sendOtp, verifyOtp }
+export { sendOtp, verifyOtp } 

@@ -5,7 +5,9 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import Channel from "../models/channel.model.js"
 import { removeExistingFile } from "../utils/cloudinary.js"
 import {Video} from "../models/video.model.js"
-const delteAccount = asyncHandler(async (req, res, next) => {
+
+const deleteAccount = asyncHandler(async (req, res, next) => {
+
   const { email, password } = req.body
   if (!email || !password) {
     throw new ApiError(400, "every field is required")
@@ -56,4 +58,4 @@ const options = {
          .json(new ApiResponse(200, " account  deleted successfully"))
 })
 
-export default delteAccount;
+export default deleteAccount;

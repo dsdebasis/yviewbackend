@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken"
 import { sendMail } from "../utils/sendMail.js";
 
 const otpVerification = asyncHandler(async (req, res, next) => {
-
+  
   const { email, otp } = req.body
 
   if (!email || !otp) {
@@ -17,8 +17,8 @@ const otpVerification = asyncHandler(async (req, res, next) => {
 
   if (veriFyOtp === true) {
 
-    let tempToken = req.cookies.account_Token || req.header("Authorization")?.replace("Bearer ", "")
-
+    let tempToken = req.cookies.tempAccountToken || req.header("Authorization")?.replace("Bearer ", "")
+    
     let verifyToken = jwt.verify(tempToken, process.env.ACCESS_TOKEN_SECRET)
 
     let { name, email, username, password } = verifyToken
@@ -44,7 +44,7 @@ const otpVerification = asyncHandler(async (req, res, next) => {
       await sendMail(createdUser.email, emailSubject, emailMessage)
 
     } catch (error) {
-      console.log("mail error",error)
+      
       throw new ApiError(500, "error while sending mail", error)
     }
 

@@ -8,6 +8,7 @@ import { asyncHandler } from "../utils/AsyncHandler.js"
 import IP from "ip"
 import { sendOtp } from "../utils/sendOtp.js"
 import otpVerification from "./otpVerification.js"
+
 const genAccessTokenAndRefreshToken = async function (userid) {
   try {
     const user = await User.findById(userid)
@@ -34,7 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
   let checkVerifyToken
 
   if (checkTempToken) {
-   checkVerifyToken =  jwt.verify(checkTempToken, process.env.ACCESS_TOKEN_SECRET)
+    checkVerifyToken = jwt.verify(checkTempToken, process.env.ACCESS_TOKEN_SECRET)
   }
 
   if (checkVerifyToken) {
@@ -78,46 +79,28 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   let tempAccountToken = tempToken(fullname, email, username, confirmPassword)
+  console.log(tempAccountToken)
   let otpDetails = await sendOtp(req, res)
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
-    expires: new Date(Date.now() + (5 * 60 * 1000))
-  }
+  // const options = 
   return res.status(200)
-    .cookie("account_Token", tempAccountToken, options)
-    .json(new ApiResponse(200, "Please Verify the email in verifyotp page"))
+    .cookie("tempAccountToken", tempAccountToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      expires: new Date(Date.now() + 60 * 60 * 1000)
+    })
+    .json(new ApiResponse(200, "Please Verify the email in verifyotp page", {
+      tempAccountToken
+    }))
+
 })
 
 
 const login = asyncHandler(async (req, res) => {
 
-  // const loginUser = req.cookies.accessToken || req.header("Authorization")?.replace("Bearer ", "")
-
-  // let parseClientCookie
-
-  // if (req.cookies.auth_info !== undefined) {
-  //   parseClientCookie =  JSON.parse(req.cookies.auth_info)
-  // }
-
   const { username, password } = req.body
-
-
-  // let verifyUser
-  // if (loginUser) {
-
-  //   verifyUser = jwt.verify(loginUser, process.env.ACCESS_TOKEN_SECRET)
-  // }
-
-
-  // if (parseClientCookie !== undefined) {
-  //   if (verifyUser && parseClientCookie.status === true) {
-  //     throw new ApiError(400, "already login")
-  //   }
-  // }
 
   if (!username || !password) {
     throw new ApiError(400, "every field is required")
@@ -200,7 +183,7 @@ const logout = asyncHandler(async (req, res) => {
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, "successfully logout"))
 
-
+ 
 })
 
 
