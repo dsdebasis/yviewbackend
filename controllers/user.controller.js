@@ -73,7 +73,7 @@ const registerUser = asyncHandler(async (req, res) => {
       username: username,
       password: confirmPassword
     }, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: "1d"
+      expiresIn: "5m"
     })
 
   }
@@ -178,12 +178,17 @@ const logout = asyncHandler(async (req, res) => {
   } catch (error) {
     throw new ApiError(500, "error while sending mail", error)
   }
+  let expireOption = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    expires: new Date(Date.now() )
+  }
   return res.status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("accessToken",expireOption)
+    .clearCookie("refreshToken", expireOption)
     .json(new ApiResponse(200, "successfully logout"))
-
- 
 })
 
 

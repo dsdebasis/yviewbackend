@@ -4,10 +4,10 @@ import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import Channel from "../models/channel.model.js"
 import { removeExistingFile } from "../utils/cloudinary.js"
-import {Video} from "../models/video.model.js"
+import { Video } from "../models/video.model.js"
 
 const deleteAccount = asyncHandler(async (req, res, next) => {
-
+  
   const { email, password } = req.body
   if (!email || !password) {
     throw new ApiError(400, "every field is required")
@@ -16,21 +16,21 @@ const deleteAccount = asyncHandler(async (req, res, next) => {
     throw new ApiError(400, "wrong email address")
   }
 
-  // console.log(await req.user.isPasswordCorrect())
+  console.log(await req.user.isPasswordCorrect())
 
   let user = await User.findById(req.user._id)
   let checkPass = await user.isPasswordCorrect(password)
- 
-  if (checkPass !== true){
-    throw new ApiError(400,"wrong password")
+
+  if (checkPass !== true) {
+    throw new ApiError(400, "wrong password")
   }
-   
+
   let deletedChannel
   console.log(req.user.channel)
   if (req.user.channel !== undefined) {
 
-    let deleteVideos =await Video.deleteMany({owner:req.user._id})
-    console.log("delete video",deleteVideos)
+    let deleteVideos = await Video.deleteMany({ owner: req.user._id })
+    console.log("delete video", deleteVideos)
     deletedChannel = await Channel.findByIdAndDelete(req.user.channel)
   } else {
     console.log("user has no channel")
@@ -46,16 +46,16 @@ const deleteAccount = asyncHandler(async (req, res, next) => {
 
   const deletedUser = await User.findByIdAndDelete(req.user._id)
 
-const options = {
-  httpOnly: true,
-  secure: true,
-  sameSite: "none",
-  path: "/",
-}
+  const options = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+  }
   return res.status(200)
-         .clearCookie("accessToken",options)
-         .clearCookie("refreshToken",options)
-         .json(new ApiResponse(200, " account  deleted successfully"))
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, " account  deleted successfully"))
 })
 
 export default deleteAccount;

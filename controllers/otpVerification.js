@@ -49,7 +49,7 @@ const otpVerification = asyncHandler(async (req, res, next) => {
     }
 
     return res.status(200)
-      .clearCookie("account_Token", {
+      .clearCookie("tempAccountToken", {
         httpOnly: true,
         secure: true,
         sameSite: "none",
