@@ -14,6 +14,7 @@ import { handleVideoUpload } from "../controllers/videoUpload.js"
 import getVideos from "../controllers/getVideos.js"
 import otpVerification from "../controllers/otpVerification.js"
 import { sendOtp } from "../utils/sendOtp.js"
+import { getVideoLink } from "../controllers/videoid.js"
 
 const router = Router()
 
@@ -53,6 +54,9 @@ router.route("/getchannel")
 
 router.route("/getvideos")
       .get(getVideos)
+
+router.route("/videoid/:vid")
+      .get(getVideoLink) 
 
 router.route("/deleteaccount")
       .delete(authenticate,deleteAccount)

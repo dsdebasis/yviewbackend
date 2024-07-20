@@ -15,7 +15,7 @@ const handleVideoUpload = asyncHandler(async (req, res) => {
   }
   const thumbnail = req.files.thumbnail?.[0]?.path
   const video = req.files.video?.[0]?.path
-console.log(video,"video")
+// console.log(video,"video")
   const { videoTitle, videoDes } = req.body
   if (video == undefined || thumbnail == undefined) {
     throw new ApiError(400, "provide video and thumbnail")
@@ -33,7 +33,7 @@ console.log(video,"video")
   let thubnailResponse = await uploadOnCloudinary(thumbnail)
   // console.log("one",thubnailResponse)
   let videoResponse = await cloduinaryVideoUpload(video);
-  console.log("two",videoResponse)
+  // console.log("two",videoResponse)
   let videoDetails =
     await Video.create({
       title: videoTitle,
