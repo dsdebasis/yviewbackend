@@ -15,14 +15,15 @@ const authenticate = asyncHandler(async function (req, res, next) {
 
   let verifyAccessToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
 
-
+// console.log("vt",verifyAccessToken._id)
   if (!verifyAccessToken) {
 
     throw new ApiError(400,"Invalid Access Token .Please generate new  access Token ",)
   }
 
   if (verifyAccessToken) {
-    req.user = await User.findById(verifyAccessToken._id).select("-password")
+    req.user = await User.findById(verifyAccessToken?._id).select("-password")
+    
     next()
   } else {
     throw new ApiError(400, "invalid cookies", "error while cookie verification")

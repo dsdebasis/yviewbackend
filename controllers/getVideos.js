@@ -4,18 +4,23 @@ import { Video } from "../models/video.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const getVideos = asyncHandler(async (req, res, next) => {
+  const { page, pageSize } = req.params;
+  if(!page || !pageSize){
+    throw new ApiError(400,"please provide page and pageSize")
+  }
   let allVideos = await Video.find(
     {},
     {
       createdAt: false,
       updatedAt: false,
     }
-  );
-  
-  
-  if(allVideos.length == 0){
-    throw new ApiError(500,"No videos found")
+  ).skip((page-1)*pageSize)
+  .limit(4);
+
+  if (allVideos.length == 0) {
+    throw new ApiError(500, "No videos found");
   }
+  // console.log(allVideos)
   return res
     .status(200)
     .json(

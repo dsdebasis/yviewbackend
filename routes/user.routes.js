@@ -52,7 +52,7 @@ router.route("/uploadvideo")
 router.route("/getchannel")
       .get(authenticate,getChannel) 
 
-router.route("/getvideos")
+router.route("/getvideos/:page/:pageSize")
       .get(getVideos)
 
 router.route("/videoid/:vid")

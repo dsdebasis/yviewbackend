@@ -159,7 +159,8 @@ const login = asyncHandler(async (req, res) => {
 const logout = asyncHandler(async (req, res) => {
   const user = req.user
 
-  const findUser = await User.findByIdAndUpdate(user._id, {
+  console.log(user)
+  const findUser = await User.findByIdAndUpdate(user?._id, {
     $inc: { activeDevice: -1 }, $set: { refreshToken: "" }
   })
 
@@ -176,6 +177,7 @@ const logout = asyncHandler(async (req, res) => {
   try {
     const mailDetails = await sendMail(findUser.email, emailSubject, emailMessage)
   } catch (error) {
+    console.log(error)
     throw new ApiError(500, "error while sending mail", error)
   }
   let expireOption = {

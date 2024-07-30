@@ -16,7 +16,7 @@ const deleteAccount = asyncHandler(async (req, res, next) => {
     throw new ApiError(400, "wrong email address")
   }
 
-  console.log(await req.user.isPasswordCorrect())
+  
 
   let user = await User.findById(req.user._id)
   let checkPass = await user.isPasswordCorrect(password)
@@ -26,7 +26,7 @@ const deleteAccount = asyncHandler(async (req, res, next) => {
   }
 
   let deletedChannel
-  console.log(req.user.channel)
+  
   if (req.user.channel !== undefined) {
 
     let deleteVideos = await Video.deleteMany({ owner: req.user._id })
