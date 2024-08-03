@@ -47,7 +47,7 @@ const videoSchema = new Schema({
   userInteractionWithVideos: {
     type: Schema.Types.ObjectId,
     ref: "VideoDetails"
-  }
+  },
 }, {
   timestamps: true
 })

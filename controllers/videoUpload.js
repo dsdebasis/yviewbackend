@@ -6,7 +6,7 @@ import { User } from "../models/user.model.js"
 import { Video } from "../models/video.model.js"
 import Channel from "../models/channel.model.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
-
+import { VideoDetails } from "../models/video.details.js"
 const handleVideoUpload = asyncHandler(async (req, res) => {
 
   // console.log(req.user.channel)
@@ -49,8 +49,16 @@ const handleVideoUpload = asyncHandler(async (req, res) => {
       channelProfilePic: userChannelDetails.channel?.profilePic
     })
 
+    const videoInteraction = await  VideoDetails.create({
+      videoId:videoDetails._id
+    })
+ 
+    videoDetails.userInteractionWithVideos= videoInteraction._id
+    await videoDetails.save()
+    
   let updateChannel = await Channel.findOneAndUpdate(userChannelDetails.channelName, {
-    $push: { videos: videoDetails._id }
+    $push: { videos: videoDetails._id },
+    
   }, { new: true })
 
   return res.status(201).json(new ApiResponse(200, "successfully video uploaded", videoDetails))

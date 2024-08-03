@@ -15,6 +15,7 @@ import getVideos from "../controllers/getVideos.js"
 import otpVerification from "../controllers/otpVerification.js"
 import { sendOtp } from "../utils/sendOtp.js"
 import { getVideoLink } from "../controllers/videoid.js"
+import { editComments, getComments, makeComments, removeComments} from "../controllers/getComment.js"
 
 const router = Router()
 
@@ -67,4 +68,14 @@ router.route("/getotp")
 router.route("/verifyotp")
       .post(otpVerification)
 
+router.route("/comments/:videoId/:page/:pageSize")
+      .get(getComments)
+      
+
+router.route("/comments/:videoId")
+      .post(authenticate,makeComments)      
+
+router.route("/comments/:commentId")
+      .patch(editComments)
+      .delete(removeComments)      
 export default router 

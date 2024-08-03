@@ -1,29 +1,34 @@
-import {Mongoose, Schema,model} from "mongoose"
+import mongoose from "mongoose"
 
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2"
 
-const vidoeDetailsSchema = new Schema({
+const vidoeDetailsSchema = new mongoose.Schema({
+  videoId:{
+   type:mongoose.Schema.Types.ObjectId,
+   ref:"Video",
+   required:[true,"videoid is must "]
+  },
   views:{
     type:Number,
   },
   likes: [
     {
-      type: Mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     }
   ],
   dislikes:[
     {
-      type: Mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     }
   ],
   comments:[{
-    type:Mongoose.Schema.Types.ObjectId,
-    ref:"User"
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Comment"
   }]
 })
 
 vidoeDetailsSchema.plugin(mongooseAggregatePaginate)
 
-export const VideoDetails = model(VideoDetails,vidoeDetailsSchema)
+export const VideoDetails = mongoose.model("VideoDetails",vidoeDetailsSchema)
