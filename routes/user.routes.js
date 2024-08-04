@@ -76,6 +76,6 @@ router.route("/comments/:videoId")
       .post(authenticate,makeComments)      
 
 router.route("/comments/:commentId")
-      .patch(editComments)
-      .delete(removeComments)      
+      .patch(authenticate,editComments)
+      .delete(authenticate,removeComments)      
 export default router 

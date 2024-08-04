@@ -11,7 +11,7 @@ const authenticate = asyncHandler(async function (req, res, next) {
 
   const refreshToken = req.cookies.refreshToken || req.header("Authorization")?.replace("Bearer ", "")
 
-  if (!accessToken) throw new ApiError(400, "No cookies found to verify for access")
+  if (!accessToken) throw new ApiError(400, "Please login ")
 
   let verifyAccessToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
 
