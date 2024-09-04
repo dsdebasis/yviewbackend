@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken"
 import { asyncHandler } from "../utils/AsyncHandler.js"
 import IP from "ip"
 import { sendOtp } from "../utils/sendOtp.js"
-import otpVerification from "./otpVerification.js"
+
 
 const genAccessTokenAndRefreshToken = async function (userid) {
   try {
@@ -55,7 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   existedUser = await User.findOne({ username })
   if (existedUser) {
-    throw new ApiError(400, "username is already existed")
+    throw new ApiError(400, "username is already exist")
   }
   if (password.length < 6) {
     throw new ApiError(400, "password must contain 6 characters long")
@@ -73,13 +73,13 @@ const registerUser = asyncHandler(async (req, res) => {
       username: username,
       password: confirmPassword
     }, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: "5m"
+      expiresIn: "15m"
     })
 
   }
 
   let tempAccountToken = tempToken(fullname, email, username, confirmPassword)
-  console.log(tempAccountToken)
+  
   let otpDetails = await sendOtp(req, res)
 
   // const options = 
@@ -89,7 +89,7 @@ const registerUser = asyncHandler(async (req, res) => {
       secure: true,
       sameSite: "none",
       path: "/",
-      expires: new Date(Date.now() + 60 * 60 * 1000)
+      expires: new Date(Date.now() + 15 * 60 * 1000)
     })
     .json(new ApiResponse(200, "Please Verify the email in verifyotp page", {
       tempAccountToken

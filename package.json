@@ -25,5 +25,9 @@
     "node": "^18.20.4",
     "nodemailer": "^6.9.13",
     "useragent": "^2.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.9.1",
+    "globals": "^15.9.0"
   }
 }
