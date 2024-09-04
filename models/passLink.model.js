@@ -19,4 +19,5 @@ const PasswordResetLinkSchema = new Schema({
     }
 })
 
-export const PasswordResetLink = mongoose.model("PasswordResetLink",PasswordResetLinkSchema)
+ const PasswordResetLink = mongoose.model("PasswordResetLink",PasswordResetLinkSchema)
+ export default PasswordResetLink

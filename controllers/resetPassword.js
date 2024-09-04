@@ -6,7 +6,7 @@ import { asyncHandler } from "../utils/AsyncHandler.js";
 import { sendOtp } from "../utils/sendOtp.js";
 import { verifyOtp } from "../utils/sendOtp.js";
 import { sendMail } from "../utils/sendMail.js";
-import { PasswordResetLink } from "../models/PassLink.model.js";
+import PasswordResetLink from "../models/passLink.model.js";
 
 const passwordResetEmail = asyncHandler(async (req, res, next) => {
   const { username, email } = req.body;

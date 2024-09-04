@@ -1,5 +1,5 @@
 import { User } from "../models/user.model.js";
-import { PasswordResetLink } from "../models/PassLink.model.js";
+import PasswordResetLink from "../models/passLink.model.js"
 import { sendMail } from "../utils/sendMail.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
