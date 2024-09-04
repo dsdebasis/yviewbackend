@@ -24,68 +24,76 @@ import {
   removeComments,
 } from "../controllers/getComment.js";
 
-import passwordReset from "../controllers/resetPassword.js";
-
+import passwordResetEmail from "../controllers/resetPassword.js";
+import verifyPasswordResetEmail from "../controllers/verifyResetPassword.js";
 const router = Router();
 
-router.route("/register").post(imageUpload.single("profilePic"), registerUser);
+router.route("/register")
+      .post(imageUpload.single("profilePic"), registerUser);
 
-router.route("/create-user").post(createUser);
-router.route("/login").post(login);
+router.route("/create-user")
+      .post(createUser);
+router.route("/login")
+      .post(login);
 
-router.route("/logout").post(authenticate, logout);
+router.route("/logout")
+      .post(authenticate, logout);
 
-router.route("/password-reset").post(passwordReset);
+router.route("/password-reset-email")
+      .post(passwordResetEmail);
 
-router
-  .route("/profile")
-  .get(authenticate, getProfile)
-  .put(authenticate, updateProfile);
+router.route("/password-resetemail-verify/:passwordResetToken")
+      .post(verifyPasswordResetEmail)
 
-router.route("/updatepassword").put(authenticate, updatePassword);
+router.route("/profile")
+      .get(authenticate, getProfile)
+      .put(authenticate, updateProfile);
 
-router
-  .route("/updateprofileandcover")
-  .get(authenticate, getProfileAndCover)
-  .put(
-    authenticate,
-    imageUpload.fields([
-      { name: "updateProfilePic", maxCount: 1 },
-      { name: "updateCoverImage", maxCount: 1 },
-    ]),
+router.route("/updatepassword")
+      .put(authenticate, updatePassword);
+
+router.route("/updateprofileandcover")
+      .get(authenticate, getProfileAndCover)
+      .put(authenticate,
+            imageUpload.fields([
+                  { name: "updateProfilePic", maxCount: 1 },
+                  { name: "updateCoverImage", maxCount: 1 },
+            ]),
     updateProfileAndCover
   );
 
-router
-  .route("/createchannel")
-  .post(authenticate, imageUpload.single("profilePic"), createChannel);
+router.route("/createchannel")
+      .post(authenticate, imageUpload.single("profilePic"), createChannel);
 
-router
-  .route("/uploadvideo")
-  .post(
-    authenticate,
-    videoUpload.fields([{ name: "thumbnail" }, { name: "video" }]),
-    handleVideoUpload
-  );
+router.route("/uploadvideo")
+      .post(authenticate,
+            videoUpload.fields([{ name: "thumbnail" }, { name: "video" }]),
+            handleVideoUpload);
 
-router.route("/getchannel").get(authenticate, getChannel);
+router.route("/getchannel")
+      .get(authenticate, getChannel);
 
-router.route("/getvideos/:page/:pageSize").get(getVideos);
+router.route("/getvideos/:page/:pageSize")
+      .get(getVideos);
 
-router.route("/videoid/:vid").get(getVideoLink);
+router.route("/videoid/:vid")
+      .get(getVideoLink);
 
-router.route("/deleteaccount").delete(authenticate, deleteAccount);
+router.route("/deleteaccount")
+      .delete(authenticate, deleteAccount);
 
-router.route("/getotp").post(sendOtp);
+router.route("/getotp")
+      .post(sendOtp);
 
 
-router.route("/comments/:videoId/:page/:pageSize").get(getComments);
+router.route("/comments/:videoId/:page/:pageSize")
+      .get(getComments);
 
-router.route("/comments/:videoId").post(authenticate, makeComments);
+router.route("/comments/:videoId")
+      .post(authenticate, makeComments);
 
-router
-  .route("/comments/:commentId")
-  .patch(authenticate, editComments)
-  .delete(authenticate, removeComments);
+router.route("/comments/:commentId")
+      .patch(authenticate, editComments)
+      .delete(authenticate, removeComments);
 
 export default router;

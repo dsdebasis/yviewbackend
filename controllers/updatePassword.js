@@ -5,7 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 const updatePassword = asyncHandler(async (req, res, next) => {
 
   const { currentPass, newPass, confirmPass } = req.body
-  // console.log("cp",currentPass,"np",newPass,"cnf",confirmPass)
+ 
   const findUser = await User.findById(req.user._id)
   let checkPass
   let passwordSaved

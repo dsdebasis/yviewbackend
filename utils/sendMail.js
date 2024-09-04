@@ -10,7 +10,7 @@ const transport = nodemailer.createTransport({
     pass:process.env.GMAIL_PASS
   },
 })
-const sendMail = async function (to, subject, message) {
+const sendMail = async function (to, subject, message,html) {
   try {
     await new Promise((resolve, reject) => {
 
@@ -19,6 +19,8 @@ const sendMail = async function (to, subject, message) {
         to: to,
         subject: subject,
         text: message,
+        html:html
+        
       }, function (error, info) {
         if (error) {
           // console.log("error while sending mail", error)
