@@ -23,6 +23,10 @@ const commentSchema = new mongoose.Schema({
     ref:"User",
     required:[true,"A owener id is must"]
   },
+  username:{
+   type:String,
+   required:true
+  },
   userPic:{
     type:String,
 

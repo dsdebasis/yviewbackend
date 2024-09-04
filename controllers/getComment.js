@@ -37,7 +37,7 @@ const getComments = asyncHandler(async (req, res) => {
 const makeComments = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
 
-  const { _id, userPic } = req.user;
+  const { _id, userPic,username } = req.user;
 
   const { comment } = req.body;
 
@@ -59,6 +59,7 @@ const makeComments = asyncHandler(async (req, res) => {
       userPic: userPic || null,
       commentTime: new Date().toDateString(),
       comment,
+      username
     });
   } catch (error) {
     throw new ApiError(
