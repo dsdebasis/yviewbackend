@@ -159,7 +159,7 @@ const login = asyncHandler(async (req, res) => {
 const logout = asyncHandler(async (req, res) => {
   const user = req.user
 
-  console.log(user)
+  
   const findUser = await User.findByIdAndUpdate(user?._id, {
     $inc: { activeDevice: -1 }, $set: { refreshToken: "" }
   })

@@ -31,7 +31,8 @@ const passwordResetEmail = asyncHandler(async (req, res, next) => {
       });
 
       const emailMessage = "Link to reset your password"
-      const link = `<a href="http://localhost:7000/api/v1/users/password-resetemail-verify/${resetPasswordLink?._id}">Click on the link to reset your password. Link will get expire in 5 Minitues.</a>`;
+      const frontEndUrl = process.env.FRONTEND_ORIGIN
+      const link = `<a href="${frontEndUrl}/password-resetemail-verify/${resetPasswordLink?._id}">Click on the link to reset your password. Link will get expire in 5 Minitues.</a>`;
 
       await sendMail(email, "Reset Password",emailMessage,link );
 

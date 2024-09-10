@@ -19,20 +19,21 @@ const verifyPasswordResetEmail = asyncHandler(async(req,res,next)=>{
     if(validToken == false){
         throw new ApiError(400,"Not a valid Token.")
     }
-    if(!password || !confirmPassword){
-        throw new ApiError(400,"Missing Password and ConfirmPassword.")
-    }
-
-    if(password !== confirmPassword){
-        throw new ApiError(400,"Password and ConfirmPassword must be same.")
-    }
+   
 
     const checkToken = await PasswordResetLink.findById(passwordResetToken)
     // console.log("token",checkToken)
     if(!checkToken){
         throw new ApiError(400,"Token is Expired or invalid.")
     } else{
-   
+        
+        if(!password || !confirmPassword){
+            throw new ApiError(400,"Missing Password and ConfirmPassword.")
+        }
+    
+        if(password !== confirmPassword){
+            throw new ApiError(400,"Password and ConfirmPassword must be same.")
+        }
        try {
          let findUser = await User.findOne({email:checkToken.email})
  
