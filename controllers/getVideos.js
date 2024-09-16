@@ -15,7 +15,7 @@ const getVideos = asyncHandler(async (req, res, next) => {
       updatedAt: false,
     }
   ).skip((page-1)*pageSize)
-  .limit(4);
+  .limit(8);
 
   if (allVideos.length == 0) {
     throw new ApiError(500, "No videos found");
