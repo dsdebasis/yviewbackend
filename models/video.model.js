@@ -44,10 +44,27 @@ const videoSchema = new Schema({
   uploadTime: {
     type: String
   },
-  userInteractionWithVideos: {
-    type: Schema.Types.ObjectId,
-    ref: "VideoDetails"
+ 
+  views:{
+    type:Number,
+    default:0
   },
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
+  ],
+  dislikes:[
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
+  ],
+  comments:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Comment"
+  }]
 }, {
   timestamps: true
 })

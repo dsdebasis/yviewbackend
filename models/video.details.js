@@ -10,6 +10,7 @@ const vidoeDetailsSchema = new mongoose.Schema({
   },
   views:{
     type:Number,
+    default:0
   },
   likes: [
     {

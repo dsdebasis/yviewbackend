@@ -6,7 +6,6 @@ import { checkMongoDbId } from "../utils/checkMongoId.js";
 const getVideoLink = asyncHandler(async (req, res) => {
   let videoId = req.params.vid;
   
-
   if (videoId == undefined || null) {
     throw new ApiError(400, "no id found");
   }
@@ -20,9 +19,7 @@ const getVideoLink = asyncHandler(async (req, res) => {
  
   if (!videoLink) {
     throw new ApiError(400, "invalid video id");
-  }
-
-  
+  } 
   return res.status(200).json(new ApiResponse(200,videoLink));
 });
 
