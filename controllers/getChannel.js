@@ -25,8 +25,18 @@ const getChannel = asyncHandler(async (req, res, next) => {
    })
   //  console.log("av",allVideos)
 
-  userChannelDetails = Object.assign(userChannelDetails,allVideos)
-    res.status(200).json(new ApiResponse(200, "successfully fetched channel details", {userChannelDetails,allVideos}))
+
+
+  let totalViews = await Video.aggregate([
+    {$match:{owner:req.user._id}},
+    {$group:{_id:"$owner",totalViews:{$sum:"$views"}}}
+  ])
+
+  
+  // console.log(userChannelDetails)
+ 
+
+  res.status(200).json(new ApiResponse(200, "successfully fetched channel details", {userChannelDetails,allVideos,totalViews})) 
     
     
   } else {
