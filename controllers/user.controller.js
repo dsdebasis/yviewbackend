@@ -119,9 +119,9 @@ const login = asyncHandler(async (req, res) => {
 
   } else {
 
-    if (findUser.activeDevice === 10) {
-      throw new ApiError(400, "maximum 10 devices are allowed")
-    }
+    // if (findUser.activeDevice === 10) {
+    //   throw new ApiError(400, "maximum 10 devices are allowed")
+    // }
 
     const { accessToken, refreshToken } = await genAccessTokenAndRefreshToken(findUser._id)
 
