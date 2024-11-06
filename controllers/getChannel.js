@@ -15,7 +15,7 @@ const getChannel = asyncHandler(async (req, res, next) => {
 
     userChannelDetails = await userChannelDetails.populate("channel")
     uploadedVideos = userChannelDetails
-    userChannelDetails = userChannelDetails.channel
+    userChannelDetails = userChannelDetails.channel.toObject()
 
     
    let allVideos = await Video.find({owner:req.user._id},{
@@ -32,11 +32,9 @@ const getChannel = asyncHandler(async (req, res, next) => {
     {$group:{_id:"$owner",totalViews:{$sum:"$views"}}}
   ])
 
-  
-  // console.log(userChannelDetails)
- 
+  userChannelDetails.totalViews = totalViews[0].totalViews
 
-  res.status(200).json(new ApiResponse(200, "successfully fetched channel details", {userChannelDetails,allVideos,totalViews})) 
+  res.status(200).json(new ApiResponse(200, "successfully fetched channel details", {userChannelDetails,allVideos})) 
     
     
   } else {
