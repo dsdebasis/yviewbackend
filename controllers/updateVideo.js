@@ -56,7 +56,7 @@ const updateVideos = asyncHandler(async (req, res) => {
         { $set: videoDetailaToUpdate },
         { new: true }
       );
-
+      res.set("Cache-Control", "public, max-age=600")
       return res.status(201).json(new ApiResponse(200, "video updated", updateVideo))
     }
   

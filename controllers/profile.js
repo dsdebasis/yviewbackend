@@ -6,6 +6,7 @@ import { ApiError } from "../utils/ApiError.js"
 const getProfile = asyncHandler(async (req, res,) => {
   const loginUser = await User.findById(req.user._id).select("-password -refreshToken -activeDevice -watchHistory ")
   //  console.log(loginUser)
+  res.set("Cache-Control", "public, max-age=600")
   return res.status(200).json(new ApiResponse(200, "profile details fetched successfully", loginUser))
 
 })
