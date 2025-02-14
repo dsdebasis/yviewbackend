@@ -8,6 +8,7 @@ const getVideoForChannel = asyncHandler(async (req, res, next) => {
 
   
   let getAllVideos = await Video.findById(req.channelOwner._id)
+  res.set('Cache-Control', 'public, max-age=3600')
   return res.json(getAllVideos)
 }) 
 

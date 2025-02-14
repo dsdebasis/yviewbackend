@@ -26,6 +26,7 @@ const updateViews = asyncHandler(async (req, res) => {
         returnDocument: "after",
       }
     );
+    res.set("Cache-Control", "public, max-age=180")
     return res
       .status(200)
       .json(new ApiResponse(200, "views updated", updateViews));

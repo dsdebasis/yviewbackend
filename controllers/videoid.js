@@ -36,6 +36,7 @@ const getVideoLink = asyncHandler(async (req, res) => {
   if (!videoLink) {
     throw new ApiError(400, "invalid video id");
   }
+  res.set("Cache-Control", "public, max-age=600")
   return res.status(200).json(new ApiResponse(200, videoLink));
 });
 

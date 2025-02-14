@@ -7,6 +7,8 @@ import { Video } from "../models/video.model.js"
 import Channel from "../models/channel.model.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { VideoDetails } from "../models/video.details.js"
+
+
 const handleVideoUpload = asyncHandler(async (req, res) => {
 
   // console.log(req.user.channel)
