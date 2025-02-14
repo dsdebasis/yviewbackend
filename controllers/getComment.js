@@ -24,7 +24,7 @@ const getComments = asyncHandler(async (req, res) => {
     console.log(error);
     throw new ApiError(400, "something went wrong", error.message);
   }
-  res.set('Cache-Control', 'public, max-age=3600')
+  res.set('Cache-Control', 'public, max-age=180')
   return res.status(200).json(
     new ApiResponse(200, {
       success: true,
