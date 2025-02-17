@@ -33,7 +33,7 @@ const removeExistingFile = function (file) {
   cloudinary.uploader.destroy(file, {
     invalidate: true
   }).then((res) => {
-
+    console.log(res)
     return res
   }).catch((error) => {
     console.log("error while deteting", error)

@@ -33,7 +33,7 @@ const getChannel = asyncHandler(async (req, res, next) => {
   ])
 
   userChannelDetails.totalViews = totalViews[0].totalViews
-  res.set('Cache-Control', 'public, max-age=180')
+  res.set('Cache-Control', 'public, max-age=20')
   return res.status(200).json(new ApiResponse(200, "successfully fetched channel details", {userChannelDetails,allVideos})) 
     
     

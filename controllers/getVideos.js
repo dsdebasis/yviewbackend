@@ -21,7 +21,7 @@ const getVideos = asyncHandler(async (req, res, next) => {
     throw new ApiError(500, "No videos found");
   }
   // console.log(allVideos)
-  res.set("Cache-Control", "public, max-age=300")
+  res.set("Cache-Control", "public, max-age=100")
   return res
     .status(200)
     .json(
