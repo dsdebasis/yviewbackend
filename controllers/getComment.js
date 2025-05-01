@@ -8,23 +8,23 @@ import { VideoDetails } from "../models/video.details.js";
 import { Video } from "../models/video.model.js";
 
 const getComments = asyncHandler(async (req, res) => {
-  const { page, pageSize, videoId } = req.params;
-  if (!page || !pageSize || !videoId) {
+  const { videoId } = req.params;
+  if ( !videoId) {
     throw new ApiError(400, "please provide all the details");
   }
 
   if (!checkMongoDbId(videoId)) {
     throw new ApiError(400, "Invalid videoId");
   }
-  let skipNum = (page - 1) * pageSize;
+
   let comments;
   try {
-    comments = await Comment.find({ videoId }).skip(skipNum).limit(pageSize);
+    comments = await Comment.find({ videoId })
   } catch (error) {
     console.log(error);
     throw new ApiError(400, "something went wrong", error.message);
   }
-  res.set('Cache-Control', 'public, max-age=180')
+  res.set('Cache-Control', 'public, max-age=10')
   return res.status(200).json(
     new ApiResponse(200, {
       success: true,

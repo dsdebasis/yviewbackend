@@ -13,26 +13,32 @@ const updateViews = asyncHandler(async (req, res) => {
   if (!checkMongoDbId(videoId))
     throw new ApiError(400, "please provide valid video id");
 
-  let findVideos = await videoModel.findOne({_id:videoId});
-
-
-  if (findVideos) {
-    const updateViews = await videoModel.findOneAndUpdate(
-      {
-        _id: videoId,
-      },
-      { $inc: { views: 1 } },
-      {
-        returnDocument: "after",
-      }
-    );
-    res.set("Cache-Control", "public, max-age=180")
-    return res
-      .status(200)
-      .json(new ApiResponse(200, "views updated", updateViews));
-  } else {
+  try {
+    let findVideos = await videoModel.findOne({_id:videoId});
+  
+  
+    if (findVideos) {
+      const updateViews = await videoModel.findOneAndUpdate(
+        {
+          _id: videoId,
+        },
+        { $inc: { views: 1 } },
+        {
+          returnDocument: "after",
+        }
+      );
+      // res.set("Cache-Control", "public, max-age=180")
+      return res
+        .status(200).set("Cache-Control", "public, max-age=10")
+        .json(new ApiResponse(200, "views updated", updateViews));
+    } else {
+      
+      throw new ApiError(400,"Invalid Video Id")
+    }
+  } catch (error) {
+    console.log(error);
+    throw new ApiError(400, "something went wrong", error.message);
     
-    throw new ApiError(400,"Invalid Video Id")
   }
 });
 

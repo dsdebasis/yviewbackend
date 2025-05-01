@@ -86,7 +86,7 @@ router.route("/getotp")
       .post(sendOtp);
 
 
-router.route("/comments/:videoId/:page/:pageSize")
+router.route("/comments/:videoId")
       .get(getComments);
 
 router.route("/comments/:videoId")

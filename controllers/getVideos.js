@@ -4,6 +4,7 @@ import { Video } from "../models/video.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const getVideos = asyncHandler(async (req, res, next) => {
+
   const { page, pageSize } = req.params;
   if(!page || !pageSize){
     throw new ApiError(400,"please provide page and pageSize")
@@ -21,7 +22,7 @@ const getVideos = asyncHandler(async (req, res, next) => {
     throw new ApiError(500, "No videos found");
   }
   // console.log(allVideos)
-  res.set("Cache-Control", "public, max-age=100")
+  res.set("Cache-Control", "public, max-age=120")
   return res
     .status(200)
     .json(
